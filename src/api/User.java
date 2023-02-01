@@ -7,6 +7,8 @@ public class User {
     private final String Password;
     private final String Firstname;
     private final String Lastname;
+    private String CPassword;
+
 
     public User(int id, String Username, String Password, String Firstname, String Lastname) {
         this.id = id;
@@ -16,7 +18,7 @@ public class User {
         this.Lastname = Lastname;
     }
 
-    public int getId() {
+    public int getID() {
         return this.id;
     }
     public String getUsername() {
@@ -28,7 +30,14 @@ public class User {
     public String getLastname() {
         return Lastname;
     }
+    public String setCPassword(String CPassword) {
+        this.CPassword = CPassword;
+        return CPassword;
+    }
     public String getPassword() {
-        return Password;
+        return CPassword;
+    }
+    public String getCPassword() {
+        return CPassword;
     }
 }

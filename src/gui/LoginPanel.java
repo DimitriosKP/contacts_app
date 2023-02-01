@@ -1,14 +1,20 @@
 package gui;
 
+import api.Users;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LoginPanel extends JPanel {
     JLabel lblTitle = new JLabel("Contact App");
     JLabel lblUsername = new JLabel("Username");
     JLabel lblPassword = new JLabel("Password");
     JTextField txtUsername = new JTextField("");
-    JTextField txtPassword = new JTextField("");
+    JPasswordField txtPassword = new JPasswordField("");
     JButton btnLogin = new JButton("Login");
     JButton btnExit = new JButton("Exit");
     JLabel lblError = new JLabel("");
@@ -38,6 +44,66 @@ public class LoginPanel extends JPanel {
         btnLogin.setBounds(50,170,100,30);
         add(btnLogin);
 
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lblError.setText("");
+                String username = txtUsername.getText();
+                String password = new String(txtPassword.getPassword());
 
+                if(Users.loginUser(username, password)) {
+                    //successful login
+
+                    new ContactFrame();
+
+                    JComponent comp = (JComponent) e.getSource();
+                    Window win = SwingUtilities.getWindowAncestor(comp);
+                    win.dispose();
+                }
+                else {
+                    lblError.setText("Your details are not valid");
+                }
+            }
+        });
+
+        btnExit.setBounds(200, 170,100,30);
+        add(btnExit);
+
+        lblError.setBounds(0,200,360,30);
+        lblError.setHorizontalAlignment(SwingConstants.CENTER);
+        lblError.setForeground(Color.red);
+        add(lblError);
+
+        lblRegister.setBounds(0,220,360,30);
+        lblRegister.setForeground(Color.BLUE);
+        lblRegister.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblRegister.setHorizontalAlignment(SwingConstants.CENTER);
+        add(lblRegister);
+        lblRegister.addMouseListener(new MouseAdapter()
+        {
+            public void mouseClicked(MouseEvent e)
+            {
+                RegisterPanel.showRegisterForm();
+            }
+        });
+
+        btnExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+    }
+
+    public static void showLoginForm() {
+        LoginPanel lgp = new LoginPanel();
+        JFrame jf = new JFrame();
+        jf.setTitle("Contact App");
+        jf.add(lgp);
+        jf.setSize(new Dimension(360, 300));
+        jf.setResizable(false);
+        jf.setLocationRelativeTo(null);
+        jf.setVisible(true);
     }
 }

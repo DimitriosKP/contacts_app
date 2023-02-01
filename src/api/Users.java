@@ -61,10 +61,74 @@ public class Users {
         List<Integer> ids = new ArrayList<>();
 
         for(User u : _users) {
-            ids.add(u.getId());
+            ids.add(u.getID());
         }
 
         return Collections.max(ids) + 1;
+    }
+
+    public static boolean checkPassword(String password, String cpassword) {
+        if (!password.equals(cpassword)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean store() {
+        if(_users.isEmpty()) return true;
+
+        try {
+            File projectDir = new File(System.getProperty("user.dir"));
+
+            BufferedWriter writer = Files.newBufferedWriter(Paths.get(projectDir + "/src/data/users.txt"));
+
+            writer.write("#ID;Username;Password;Firstname,Lastname");
+            writer.newLine();
+
+            for(User u : _users) {
+                String line = "";
+                line += u.getID() + DELIMETER +
+                        u.getUsername()  + DELIMETER +
+                        u.getPassword() + DELIMETER +
+                        u.getCPassword() + DELIMETER +
+                        u.getFirstname() + DELIMETER +
+                        u.getLastname() + DELIMETER;
+
+                writer.write(line);
+                writer.newLine();
+            }
+            writer.close();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static String getUserFirstname(int user_id) {
+        if (_users == null) Users.load();
+
+        for(User u : _users) {
+            if(u.getID() == user_id) {
+                return u.getFirstname();
+            }
+        }
+        return "Unknown";
+    }
+
+    public static boolean loginUser(String username , String password) {
+        LoggedUser = null;
+
+        if(_users == null) Users.load();
+        for(User u : _users) {
+            if(u.getUsername().equals(username.trim())){
+                if(u.getPassword().equals(u.getPassword().trim())){
+                    LoggedUser = u;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean registerUser(String username, String password, String firstname, String lastname) throws Exception {
