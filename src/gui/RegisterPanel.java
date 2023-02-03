@@ -35,7 +35,6 @@ public class RegisterPanel extends JPanel {
     public RegisterPanel() {
         setLayout(null);
 
-
         lblTitle.setFont(new Font("Verdana",Font.BOLD, 20));
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitle.setBounds(20,10,360,30);
@@ -47,13 +46,11 @@ public class RegisterPanel extends JPanel {
         txtFirstname.setBounds(200,70,150,30);
         add(txtFirstname);
 
-
         lblLastname.setBounds(50,110,100,30);
         add(lblLastname);
 
         txtLastname.setBounds(200,110,150,30);
         add(txtLastname);
-
 
         lblUsername.setBounds(50,150,100,30);
         add(lblUsername);
@@ -72,7 +69,6 @@ public class RegisterPanel extends JPanel {
 
         txtConfPassword.setBounds(200,230,150,30);
         add(txtConfPassword);
-
 
         btnRegister.setBounds(50,280,100,30);
         add(btnRegister);

@@ -54,7 +54,7 @@ public class LoginPanel extends JPanel {
                 if(Users.loginUser(username, password)) {
                     //successful login
 
-                    new ContactFrame();
+                    new ContactsFrame();
 
                     JComponent comp = (JComponent) e.getSource();
                     Window win = SwingUtilities.getWindowAncestor(comp);

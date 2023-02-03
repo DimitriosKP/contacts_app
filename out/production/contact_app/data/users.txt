@@ -1,4 +1,2 @@
 #ID;Username;Password;Firstname,Lastname
-1;JimmyHendrix;null;null;null;null;
-2;asdf;null;null;null;mark;
-3;DimiPef;null;null;Dimitrios;Peftitsis;
+1;asd;123;Dimitris;Pef;

@@ -7,12 +7,12 @@ public class User {
     private final String Password;
     private final String Firstname;
     private final String Lastname;
-    private String CPassword;
 
 
-    public User(int id, String Username, String Password, String Firstname, String Lastname) {
+    public User(int id, String Username, /*String Birthday;,*/ String Password, String Firstname, String Lastname) {
         this.id = id;
         this.Username = Username;
+        //this.day = day;
         this.Password = Password;
         this.Firstname = Firstname;
         this.Lastname = Lastname;
@@ -30,14 +30,10 @@ public class User {
     public String getLastname() {
         return Lastname;
     }
-    public String setCPassword(String CPassword) {
-        this.CPassword = CPassword;
-        return CPassword;
-    }
     public String getPassword() {
-        return CPassword;
+        return Password;
     }
-    public String getCPassword() {
-        return CPassword;
+    public boolean isUser(){
+        return true;
     }
 }

@@ -30,6 +30,8 @@ public class Users {
                 String[] tokens = line.split(DELIMETER);
 
                 User u = new User(Integer.parseInt(tokens[0]), tokens[1], tokens[2], tokens[3], tokens[4]);
+
+                //User u = new User(Integer.parseInt(tokens[0]), tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
                 _users.add(u);
             }
 
@@ -39,11 +41,6 @@ public class Users {
             _users = null;
             throw new RuntimeException(e);
         }
-    }
-
-    public static List<User> getUsers() {
-        if (_users == null) Users.load();
-        return _users;
     }
 
     public static boolean usernameExists(String username) {
@@ -84,6 +81,8 @@ public class Users {
             BufferedWriter writer = Files.newBufferedWriter(Paths.get(projectDir + "/src/data/users.txt"));
 
             writer.write("#ID;Username;Password;Firstname,Lastname");
+            writer.write("#ID;Username;Birthday;Password;Firstname,Lastname");
+            //
             writer.newLine();
 
             for(User u : _users) {
@@ -91,7 +90,7 @@ public class Users {
                 line += u.getID() + DELIMETER +
                         u.getUsername()  + DELIMETER +
                         u.getPassword() + DELIMETER +
-                        u.getCPassword() + DELIMETER +
+                        //u.getBirthday() + DELIMETER +
                         u.getFirstname() + DELIMETER +
                         u.getLastname() + DELIMETER;
 
@@ -105,16 +104,6 @@ public class Users {
         return true;
     }
 
-    public static String getUserFirstname(int user_id) {
-        if (_users == null) Users.load();
-
-        for(User u : _users) {
-            if(u.getID() == user_id) {
-                return u.getFirstname();
-            }
-        }
-        return "Unknown";
-    }
 
     public static boolean loginUser(String username , String password) {
         LoggedUser = null;
@@ -122,7 +111,7 @@ public class Users {
         if(_users == null) Users.load();
         for(User u : _users) {
             if(u.getUsername().equals(username.trim())){
-                if(u.getPassword().equals(u.getPassword().trim())){
+                if(u.getPassword().equals(password.trim())){
                     LoggedUser = u;
                     return true;
                 }
