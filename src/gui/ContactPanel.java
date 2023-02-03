@@ -17,7 +17,7 @@ public class ContactPanel extends JPanel {
 
     // The form will be used to view, edit and create a new accommodation
     // When creating it, we will initialize it according to the value of VIEW_TYPE
-    public enum VIEW_TYPE{
+    public enum VIEW_TYPE {
         VIEW,
         NEW,
         EDIT
@@ -44,7 +44,7 @@ public class ContactPanel extends JPanel {
      * @param view_type the view type of the form view/edit/create
      * @param onChangeListener an ActionListener to update the main form with changes made to the contact
      */
-    public ContactPanel(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener){
+    public ContactPanel(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {
         int width = 600;
 
         JLabel lblBs = new JLabel("/");
@@ -243,11 +243,12 @@ public class ContactPanel extends JPanel {
      * Initializes the form according to whether the fields can be edited or not
      * @param can_edit If the user can modify the field values
      */
-    private void fillValues(boolean can_edit){
+    private void fillValues(boolean can_edit) {
         txtFname.setText(_contact.getFirstname());
         txtFname.setEditable(can_edit);
 
         txtLname.setText(_contact.getLastname());
+        txtLname.setEditable(can_edit);
 
         day.setSelectedIndex(selectedDay(_contact.getDay()));
         month.setSelectedIndex(selectedMonth(_contact.getMonth()));
@@ -270,8 +271,7 @@ public class ContactPanel extends JPanel {
 
     }
     private int selectedDay(int value) {
-        for (int i=0; i < day.getItemCount(); i++)
-        {
+        for (int i=0; i < day.getItemCount(); i++) {
             if (day.getItemAt(i).equals(value)) {
                 day.setSelectedIndex(i);
                 return i;
@@ -280,8 +280,7 @@ public class ContactPanel extends JPanel {
         return -1;
     }
     private int selectedMonth(int value) {
-        for (int i=0; i < month.getItemCount(); i++)
-        {
+        for (int i=0; i < month.getItemCount(); i++) {
             if (month.getItemAt(i).equals(value)) {
                 month.setSelectedIndex(i);
                 return i;
@@ -290,8 +289,7 @@ public class ContactPanel extends JPanel {
         return -1;
     }
     private int selectedYear(int value) {
-        for (int i=0; i < year.getItemCount(); i++)
-        {
+        for (int i=0; i < year.getItemCount(); i++) {
             if (year.getItemAt(i).equals(value)) {
                 year.setSelectedIndex(i);
                 return i;
@@ -304,11 +302,11 @@ public class ContactPanel extends JPanel {
      * Saves the changes made to the form, checking for the existence of the required fields
      */
     private void saveChanges(){
-        if (txtFname.getText().isBlank()){
+        if (txtFname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts first name", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (txtLname.getText().isBlank()){
+        if (txtLname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts last name", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -328,13 +326,11 @@ public class ContactPanel extends JPanel {
             showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (!txtPhone.getText().startsWith("69")) {
-            showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if(txtPhone.getText().length() != 10) {
-            showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        if (txtPhone.getText().startsWith("69")) {
+            if(txtPhone.getText().length() != 10) {
+                showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         if (txtEmail.getText().isBlank()){
             showMessageDialog(null, "Please enter an email address", "Error", JOptionPane.ERROR_MESSAGE);
@@ -345,7 +341,7 @@ public class ContactPanel extends JPanel {
             return;
         }
 
-        if (_contact == null){
+        if (_contact == null) {
             _contact = new Contact(
                     Contacts.getNextContactId(),
                     txtFname.getText(),
@@ -360,7 +356,7 @@ public class ContactPanel extends JPanel {
                     txtPostcode.getText()
                     );
 
-            if (!Contacts.addContact(_contact)){
+            if (!Contacts.addContact(_contact)) {
                 showMessageDialog(null, "Failed to store contact", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -380,7 +376,7 @@ public class ContactPanel extends JPanel {
         }
 
         // Αποθηκεύουμε τις αλλαγές
-        if (!Contacts.store()){
+        if (!Contacts.store()) {
             showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -389,7 +385,7 @@ public class ContactPanel extends JPanel {
         // We do it through the listener we defined when creating the window
         // In the view, no action needs to be taken, so the listener is null
 
-        if (_onChangeListener != null){
+        if (_onChangeListener != null) {
             _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
         }
         showMessageDialog(null, "The changes are saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
@@ -402,8 +398,8 @@ public class ContactPanel extends JPanel {
      * Deletes the contact from the system
      *
      */
-    private void deleteContact(){
-        if (!Contacts.deleteContact(_contact.getID())){
+    private void deleteContact() {
+        if (!Contacts.deleteContact(_contact.getID())) {
             showMessageDialog(null, "Delete failed", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -412,7 +408,7 @@ public class ContactPanel extends JPanel {
         // We do it through the listener we defined when creating the window
         // In the view, no action needs to be taken, so the listener is null
 
-        if (_onChangeListener != null){
+        if (_onChangeListener != null) {
             _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 2, ""));
         }
         showMessageDialog(null, "The contact deleted", "Delete", JOptionPane.INFORMATION_MESSAGE);
@@ -420,7 +416,7 @@ public class ContactPanel extends JPanel {
         _contact_frame.dispose();
         _contact_frame=null;
     }
-    public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener){
+    public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {
         int width = 600;
         int height = 600;
 

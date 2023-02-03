@@ -6,6 +6,8 @@ public class Contact {
 
     private String _firstname = "";
     private String _lastname = "";
+    private String _username = "";
+    private String _password = "";
     private int _day;
     private int _month;
     private int _year;
@@ -17,14 +19,17 @@ public class Contact {
     private String _birthday = "";
     /**
      * Creates a new contact
-     * @param ID user's ID
-     * @param firstname user's first name
-     * @param lastname user's last name
-     * @param phone user's number
-     * @param email user's email address
+     * @param ID contact's ID
+     * @param firstname contact's first name
+     * @param lastname contact's last name
+     * @param day contact's day of birth
+     * @param month contact's month of birth
+     * @param year contact's year of birth
+     * @param phone contact's number
+     * @param email contact's email address
      * @param address address of the user
-     * @param city user's city
-     * @param postcode user's postcode
+     * @param city contact's city
+     * @param postcode contact's postcode
      */
     public Contact(int ID, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
         setFirstname(firstname);
@@ -42,52 +47,66 @@ public class Contact {
     }
 
     /**
-     * Returns the user's ID
+     * Returns the contact's ID
      *
-     * @return The user's ID
+     * @return The contact's ID
      */
     public int getID(){
         return _id;
     }
 
     /**
-     * Sets the user's first name
+     * Sets the contact's first name
      *
-     * @param firstname The new first name of user
+     * @param firstname The contact's first name
      */
-    public void setFirstname(String firstname){
-
-        _firstname = firstname.trim();
-    }
+    public void setFirstname(String firstname){ _firstname = firstname.trim(); }
 
     /**
-     * Sets the user's surname
+     * Sets the contact's surname
      *
-     * @param lastname The new surname of user
+     * @param lastname The contact's last name
      */
-    public void setLastname(String lastname){
+    public void setLastname(String lastname){ _lastname = lastname.trim(); }
 
-        _lastname = lastname.trim();
-    }
-
+    /**
+     * Sets the contact's phone number
+     *
+     * @param phone
+     */
     public void setPhone(String phone) {
         _phone = phone;
     }
 
+    /**
+     * Sets the contact's email address
+     *
+     * @param email The contact's email address
+     */
     public void setEmail(String email) {
         _email = email.trim();
     }
 
+    /**
+     * returns the contact's address
+     *
+     * @return the contact's address
+     */
     public String getPhone() {
         return _phone;
     }
 
+    /**
+     * returns the contact's email address
+     *
+     * @return the contact's email address
+     */
     public String getEmail() {
         return _email;
     }
 
     /**
-     * returns the user's first name
+     * returns the contact's first name
      *
      * @return the first name
      */
@@ -96,17 +115,15 @@ public class Contact {
     }
 
     /**
-     * returns the user's last name
+     * returns the contact's last name
      *
      * @return the last name
      */
     public String getLastname() {
         return _lastname;
     }
-
-
     /**
-     * Sets the user's address
+     * Sets the contact's address
      *
      * @param address the new address of user
      */
@@ -115,7 +132,7 @@ public class Contact {
     }
 
     /**
-     * returns the user's address
+     * returns the contact's address
      *
      * @return the users address
      */
@@ -125,62 +142,104 @@ public class Contact {
 
 
     /**
-     * Sets the user's city
+     * Sets the contact's city
      *
      * @param city the new city of city
      */
     public void setCity(String city){
         _city = city.trim();
     }
+
     /**
-     * returns the user's city
+     * returns the contact's city
      *
-     * @return the user's city
+     * @return the contact's city
      */
     public String getCity(){
         return _city;
     }
 
     /**
-     * Sets the user's postcode
+     * Sets the contact's postcode
      *
      * @param postcode The new postcode of the user
      */
-    public void setPostcode(String postcode){
+    public void setPostcode(String postcode){ _postcode = postcode.trim(); }
 
-        _postcode = postcode.trim();
-    }
     /**
-     * Returns the user's postcode
+     * Returns the contact's postcode
      *
-     * @return The user's postcode
+     * @return The contact's postcode
      */
     public String getPostcode(){
         return _postcode;
     }
+
+    /**
+     * Sets the contact's day of birth
+     *
+     * @param day contact's day of birth
+     */
     public void setDay(int day){
         _day = day;
     }
+
+    /**
+     * Sets the contact's month of birth
+     *
+     * @param month contact's day of birth
+     */
     public void setMonth(int month){
         _month = month;
     }
+
+    /**
+     * Sets the contact's year of birth
+     *
+     * @param year contact's day of birth
+     */
     public void setYear(int year){
         _year = year;
     }
+
+    /**
+     * Returns the contact's day of birth
+     *
+     * @return The contact's _day
+     */
     public int getDay(){
         return _day;
     }
+
+    /**
+     * Returns the contact's month of birth
+     *
+     * @return The contact's month of birth
+     */
     public int getMonth(){
         return _month;
     }
+
+    /**
+     * Returns the contact's year of birth
+     *
+     * @return The contact's year of birth
+     */
     public int getYear(){
         return _year;
     }
+
+    /**
+     * Sets the contact's birthday as string
+     *
+     * @param _day
+     * @param _month
+     * @param _year
+     *
+     * @return The contact's birthday as string
+     */
     public String setBirthday(int _day, int _month, int _year) {
         _birthday = _day + "/" + _month + "/" + _year;
-        return _birthday;
-    }
-    public String getBirthday(String _birthday) {
         return _birthday;
     }
 }

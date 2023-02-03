@@ -68,16 +68,12 @@ public class Contacts {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         this.birthday = formatter.parse(day + "/" + month + "/" + year);
     }
-    public Date getBirthday() {
-        return birthday;
-    }
 
     /**
      * Add a contact to system
      *
      * @param contact the object of new contact
      */
-
     public static boolean addContact(Contact contact) {
         if (_contacts == null) load();
         _contacts.add(contact);
@@ -167,7 +163,6 @@ public class Contacts {
         return null;
     }
 
-
     /**
      * Returns a list of Contact objects with all registered contacts
      * @return List of objects of type Contact
@@ -176,5 +171,4 @@ public class Contacts {
         if (_contacts == null) load();
         return _contacts;
     }
-
 }
