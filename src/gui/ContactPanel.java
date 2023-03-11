@@ -2,11 +2,13 @@ package gui;
 
 import api.Contacts;
 import api.Contact;
+import api.Users;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -15,7 +17,7 @@ public class ContactPanel extends JPanel {
     static JFrame _contact_frame;
     ActionListener _onChangeListener = null;
 
-    // The form will be used to view, edit and create a new accommodation
+    // The form will be used to view, edit and create a new contact
     // When creating it, we will initialize it according to the value of VIEW_TYPE
     public enum VIEW_TYPE {
         VIEW,
@@ -182,7 +184,7 @@ public class ContactPanel extends JPanel {
         top+=60;
 
         // Save and cancel button will only appear in case of edit or new entry
-        if (view_type == VIEW_TYPE.EDIT || view_type == VIEW_TYPE.NEW) {
+        if (view_type == VIEW_TYPE.EDIT) {
             btnSave.setBounds(left + 180, top, 120, 30);
             add(btnSave);
 
@@ -192,7 +194,11 @@ public class ContactPanel extends JPanel {
             btnSave.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    saveChanges();
+                    try {
+                        store(view_type);
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
             btnCancel.addActionListener(new ActionListener() {
@@ -201,6 +207,31 @@ public class ContactPanel extends JPanel {
                     _contact_frame.dispose();
                 }
             });
+        }
+        if(view_type == VIEW_TYPE.NEW){
+            btnSave.setBounds(left + 180, top, 120, 30);
+            add(btnSave);
+
+            btnCancel.setBounds(left + 380, top, 120, 30);
+            add(btnCancel);
+
+            btnSave.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        store(view_type);
+                    } catch (ClassNotFoundException | SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+            btnCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _contact_frame.dispose();
+                }
+            });
+
         }
         if (view_type == VIEW_TYPE.VIEW) {
             btnEdit.setBounds(left + 180, top, 120, 30);
@@ -223,10 +254,17 @@ public class ContactPanel extends JPanel {
             btnDelete.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the item?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
+                    int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the contact?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
 
                     if (result == JOptionPane.YES_OPTION) {
-                        deleteContact();
+                        try {
+                            Contacts.deleteContact(Contacts.getContactsID());
+                            _contact_frame.dispose();
+                            _contact_frame = null;
+                            Contacts.load();
+                        } catch (SQLException | ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             });
@@ -298,10 +336,7 @@ public class ContactPanel extends JPanel {
         return -1;
     }
 
-    /**
-     * Saves the changes made to the form, checking for the existence of the required fields
-     */
-    private void saveChanges(){
+    private void store(VIEW_TYPE view_type) throws SQLException, ClassNotFoundException {
         if (txtFname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts first name", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -315,8 +350,7 @@ public class ContactPanel extends JPanel {
         if (txtAddress.getText().isBlank()){
             showMessageDialog(null, "Please enter the contacts address", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }
-         */
+        }*/
 
         if (txtPhone.getText().isBlank()) {
             showMessageDialog(null, "Please enter a phone number", "Error", JOptionPane.ERROR_MESSAGE);
@@ -342,27 +376,13 @@ public class ContactPanel extends JPanel {
         }
 
         if (_contact == null) {
-            _contact = new Contact(
-                    Contacts.getNextContactId(),
-                    txtFname.getText(),
-                    txtLname.getText(),
-                    day.getSelectedItem().toString(),
-                    month.getSelectedItem().toString(),
-                    year.getSelectedItem().toString(),
-                    txtPhone.getText(),
-                    txtEmail.getText(),
-                    txtAddress.getText(),
-                    txtCity.getText(),
-                    txtPostcode.getText()
-                    );
-
+            _contact = new Contact(Contacts.getNextContactId(), Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
             if (!Contacts.addContact(_contact)) {
                 showMessageDialog(null, "Failed to store contact", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-        }
-        else {
+        } else {
+            _contact.setOwner(Users.LoggedUser.getID());
             _contact.setFirstname(txtFname.getText());
             _contact.setLastname(txtLname.getText());
             _contact.setDay(Integer.parseInt(day.getSelectedItem().toString()));
@@ -376,46 +396,34 @@ public class ContactPanel extends JPanel {
         }
 
         // Αποθηκεύουμε τις αλλαγές
-        if (!Contacts.store()) {
-            showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        if(view_type == VIEW_TYPE.NEW) {
+            if (!Contacts.store(_contact)) {
+                showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (_onChangeListener != null) {
+                _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
+            }
+            showMessageDialog(null, "The contact saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (view_type == VIEW_TYPE.EDIT){
+            if (!Contacts.update(_contact)) {
+                showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (_onChangeListener != null) {
+                _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
+            }
+            showMessageDialog(null, "The changes are saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
         }
 
         // We need to inform the main form that a change has been made so that it reloads the results.
         // We do it through the listener we defined when creating the window
-        // In the view, no action needs to be taken, so the listener is null
-
-        if (_onChangeListener != null) {
-            _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
-        }
-        showMessageDialog(null, "The changes are saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
 
         _contact_frame.dispose();
         _contact_frame=null;
     }
 
-    /**
-     * Deletes the contact from the system
-     *
-     */
-    private void deleteContact() {
-        if (!Contacts.deleteContact(_contact.getID())) {
-            showMessageDialog(null, "Delete failed", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // We need to inform the main form that a change has been made so that it reloads the results.
-        // We do it through the listener we defined when creating the window
-        // In the view, no action needs to be taken, so the listener is null
-
-        if (_onChangeListener != null) {
-            _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 2, ""));
-        }
-        showMessageDialog(null, "The contact deleted", "Delete", JOptionPane.INFORMATION_MESSAGE);
-
-        _contact_frame.dispose();
-        _contact_frame=null;
-    }
     public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {
         int width = 600;
         int height = 600;

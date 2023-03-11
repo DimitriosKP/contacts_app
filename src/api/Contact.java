@@ -2,8 +2,8 @@ package api;
 
 
 public class Contact {
-    private final int _id;
-
+    private int _id;
+    private int _ownerID = 0;
     private String _firstname = "";
     private String _lastname = "";
     private String _username = "";
@@ -19,19 +19,22 @@ public class Contact {
     private String _birthday = "";
     /**
      * Creates a new contact
-     * @param ID contact's ID
+     * @param id  contact's ID
+     * @param owner_id  contact's owner ID
      * @param firstname contact's first name
-     * @param lastname contact's last name
-     * @param day contact's day of birth
-     * @param month contact's month of birth
-     * @param year contact's year of birth
-     * @param phone contact's number
-     * @param email contact's email address
-     * @param address address of the user
-     * @param city contact's city
-     * @param postcode contact's postcode
+     * @param lastname  contact's last name
+     * @param day       contact's day of birth
+     * @param month     contact's month of birth
+     * @param year      contact's year of birth
+     * @param phone     contact's number
+     * @param email     contact's email address
+     * @param address   address of the user
+     * @param city      contact's city
+     * @param postcode  contact's postcode
      */
-    public Contact(int ID, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
+    public Contact(int id, int owner_id, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
+        setId(id);
+        setOwner(owner_id);
         setFirstname(firstname);
         setLastname(lastname);
         setDay(Integer.parseInt(day));
@@ -42,8 +45,9 @@ public class Contact {
         setAddress(address);
         setCity(city);
         setPostcode(postcode);
-
-        _id = ID;
+    }
+    public void setId(int id){
+        _id = id;
     }
 
     /**
@@ -56,7 +60,31 @@ public class Contact {
     }
 
     /**
-     * Sets the contact's first name
+     * Returns the contact's owners ID
+     *
+     * @return The contact's owners ID
+     */
+    public int getOwnerID(){
+        return _id;
+    }
+
+    /**
+     * Sets the Owner's user_id
+     *
+     * @param user_id The Owner's user_id
+     */
+    public void setOwner(int user_id){
+        _ownerID = user_id;
+    }
+    public int getOwner(){
+        return _ownerID;
+    }
+    public boolean isOwner(int user_id){
+        return _ownerID == user_id;
+    }
+
+    /**
+     * Sets the contact's firstname
      *
      * @param firstname The contact's first name
      */

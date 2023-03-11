@@ -9,10 +9,9 @@ public class User {
     private final String Lastname;
 
 
-    public User(int id, String Username, /*String Birthday;,*/ String Password, String Firstname, String Lastname) {
+    public User(int id, String Username, String Password, String Firstname, String Lastname) {
         this.id = id;
         this.Username = Username;
-        //this.day = day;
         this.Password = Password;
         this.Firstname = Firstname;
         this.Lastname = Lastname;

@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 public class LoginPanel extends JPanel {
     JLabel lblTitle = new JLabel("Contact App");
@@ -54,7 +55,13 @@ public class LoginPanel extends JPanel {
                 if(Users.loginUser(username, password)) {
                     //successful login
 
-                    new ContactsFrame();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
                     JComponent comp = (JComponent) e.getSource();
                     Window win = SwingUtilities.getWindowAncestor(comp);

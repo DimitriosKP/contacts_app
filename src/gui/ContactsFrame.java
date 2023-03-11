@@ -4,6 +4,7 @@ import api.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,11 @@ public class ContactsFrame extends JFrame implements ActionListener {
     JPanel contactsPanel;
     JScrollPane scrollPane;
 
-    ContactsFrame _contactsFrame = null;
+    ContactsFrame _contactsFrame;
     JButton btnSearch;
     boolean showingSearchResults=false;
 
-
-    public ContactsFrame() {
+    public ContactsFrame() throws SQLException, ClassNotFoundException {
         setTitle("My Contacts");
         setSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
@@ -55,7 +55,11 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     else {
                         showingSearchResults = false;
                         btnSearch.setText("Search");
-                        reloadContacts();
+                        try {
+                            reloadContacts();
+                        } catch (SQLException | ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             });
@@ -100,13 +104,14 @@ public class ContactsFrame extends JFrame implements ActionListener {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
 
         for(Contact c : contacts) {
+            if (Users.LoggedUser.isUser()) {
+                if (!c.isOwner(Users.LoggedUser.getID())) continue;
+            }
 
             JPanel pane = new JPanel(new GridBagLayout());
-
             GridBagConstraints g = new GridBagConstraints();
 
             // We create for each contact a line in our scrollpanel
-
             JLabel lblName = new JLabel(c.getFirstname() + " " + c.getLastname());
             lblName.setFont(new Font("Verdana",Font.BOLD, 24));
             lblName.setSize(300,20);
@@ -132,7 +137,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
             g.insets = new Insets(0,10,0,0);
             pane.add(lblEmail, g);
 
-            JLabel lblAddress = new JLabel(c.getAddress() + ", " + c.getCity() + ", " + c.getPostcode() );
+            JLabel lblAddress = new JLabel(c.getAddress() + ", " + c.getCity() + ", " + c.getPostcode());
             lblAddress.setFont(new Font("Verdana", Font.PLAIN , 14));
             g.fill = GridBagConstraints.HORIZONTAL;
             g.gridx = 2;
@@ -145,7 +150,11 @@ public class ContactsFrame extends JFrame implements ActionListener {
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ContactsFrame cf = new ContactsFrame();
+                    try {
+                        ContactsFrame cf = new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
 
@@ -192,7 +201,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
      * Creates the list of all contacts after modification
      *
      */
-    private void reloadContacts(){
+    public void reloadContacts() throws SQLException, ClassNotFoundException {
         reloadContacts(Contacts.getContacts());
     }
 
@@ -201,7 +210,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
      *
      * @param contacts The contacts we want to be listed
      */
-    private void reloadContacts(java.util.List<Contact> contacts){
+    public void reloadContacts(List<Contact> contacts) {
         contactsPanel.remove(scrollPane);
         scrollPane = new JScrollPane(createContactsList(contacts));
         contactsPanel.add(scrollPane);
@@ -218,7 +227,12 @@ public class ContactsFrame extends JFrame implements ActionListener {
         if (e.getActionCommand().equals("SEARCH")){
             Map<String,String> terms = ((SearchPanel)e.getSource()).getSearchTerms();
 
-            java.util.List<Contact> contacts = new ArrayList<>(Contacts.getContacts());   // We want a copy of the original list, so we don't affect it
+            List<Contact> contacts;   // We want a copy of the original list, so we don't affect it
+            try {
+                contacts = new ArrayList<>(Contacts.getContacts());
+            } catch (SQLException | ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
 
             List<Contact> to_remove = new ArrayList<>();
             for (Contact c : contacts){
@@ -261,6 +275,10 @@ public class ContactsFrame extends JFrame implements ActionListener {
             return;
 
         }
-        reloadContacts();
+        try {
+            reloadContacts();
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

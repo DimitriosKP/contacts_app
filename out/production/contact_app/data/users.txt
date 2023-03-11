@@ -1,3 +1,0 @@
-#ID;Username;Password;Firstname,Lastname#ID;Username;Birthday;Password;Firstname,Lastname
-1;asd;123;Dimitris;Pef;
-2;user;123;User3;Surname3;

@@ -1,111 +1,113 @@
 package api;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import javax.swing.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+
 public class Users {
     private static List<User> _users;
     public static User LoggedUser = null;
-    static String DELIMETER = ";";
+
+    /**
+     * Saves the new contacts to database.
+     *
+     * @return True if saved
+     */
+    public static boolean store() throws ClassNotFoundException, SQLException {
+        Connect connection = new Connect();
+
+        if (_users.isEmpty()) return true;
+        for (User u : _users) {
+            String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
+            try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                 PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, u.getID());
+                pstmt.setString(2, u.getPassword());
+                pstmt.setString(3, u.getUsername());
+                pstmt.setString(4, u.getFirstname());
+                pstmt.setString(5, u.getLastname());
+                pstmt.executeUpdate();
+
+            } catch (SQLException e) {
+                // handle exception
+            }
+        }
+        return true;
+    }
 
     public static void load() {
         try {
-            File projectDir = new File(System.getProperty("user.dir"));
-            BufferedReader br = Files.newBufferedReader(Paths.get(projectDir+"/src/data/users.txt"));
-
             _users = new ArrayList<>();
+            Connect connection = new Connect();
+            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
 
-            //read the file line by line
-            String line;
-            while((line = br.readLine()) != null) {
-                //ignore line starting with #
-                if(line.trim().startsWith("#")) continue;
+            // Create a statement object
+            Statement stmt = conn.createStatement();
 
-                //convert line into tokens
-                String[] tokens = line.split(DELIMETER);
+            // Execute the SQL query and get the result set
+            ResultSet rs = stmt.executeQuery("SELECT id, username, password, firstname, lastname FROM users");
 
-                User u = new User(Integer.parseInt(tokens[0]), tokens[1], tokens[2], tokens[3], tokens[4]);
+            // Loop through the result set and create the Contact List _contacts
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String firstname = rs.getString("firstname");
+                String lastname = rs.getString("lastname");
 
-                //User u = new User(Integer.parseInt(tokens[0]), tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
+                User u = new User(id, username, password, firstname, lastname);
                 _users.add(u);
             }
-
-            //close the reader
-            br.close();
-        }catch (Exception e) {
+            // Close the result set, statement, and connection
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception e) {
             _users = null;
-            throw new RuntimeException(e);
+            showMessageDialog(null, "Error due to users loading", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public static boolean usernameExists(String username) {
-        for(User u : _users) {
-            if(u.getUsername().equals(username.trim())){
+        for (User u : _users) {
+            if (u.getUsername().equals(username.trim())) {
                 return true;
             }
         }
         return false;
     }
 
-    public static int getNextUserId() {
-        if (_users == null) Users.load();
-
+    public static int getNextUserId() throws SQLException, ClassNotFoundException {
+        Connect connection = new Connect();
+        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
         List<Integer> ids = new ArrayList<>();
 
-        for(User u : _users) {
-            ids.add(u.getID());
-        }
+        // Create a statement object
+        Statement stmt = conn.createStatement();
 
+        // Execute the SQL query to delete the contact with the given ID
+        String query = "SELECT id FROM users";
+
+        ResultSet rs = stmt.executeQuery(query);
+        while(rs.next()){
+            ids.add(rs.getInt("id"));
+        }
+        // Close the result set, statement, and connection
+        rs.close();
+        stmt.close();
+        conn.close();
         return Collections.max(ids) + 1;
     }
 
     public static boolean checkPassword(String password, String cpassword) {
-        if (!password.equals(cpassword)) {
-            return false;
-        }
-        return true;
+        return password.equals(cpassword);
     }
 
-
-    public static boolean store() {
-        if(_users.isEmpty()) return true;
-
-        try {
-            File projectDir = new File(System.getProperty("user.dir"));
-
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get(projectDir + "/src/data/users.txt"));
-
-            writer.write("#ID;Username;Password;Firstname,Lastname");
-            writer.write("#ID;Username;Birthday;Password;Firstname,Lastname");
-            //
-            writer.newLine();
-
-            for(User u : _users) {
-                String line = "";
-                line += u.getID() + DELIMETER +
-                        u.getUsername()  + DELIMETER +
-                        u.getPassword() + DELIMETER +
-                        //u.getBirthday() + DELIMETER +
-                        u.getFirstname() + DELIMETER +
-                        u.getLastname() + DELIMETER;
-
-                writer.write(line);
-                writer.newLine();
-            }
-            writer.close();
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-
-    public static boolean loginUser(String username , String password) {
+    public static boolean loginUser(String username, String password) {
         LoggedUser = null;
 
         if(_users == null) Users.load();
@@ -129,6 +131,6 @@ public class Users {
         User user = new User(getNextUserId(), username, password, firstname, lastname);
         _users.add(user);
 
-        return store();
+        return Users.store();
     }
 }
