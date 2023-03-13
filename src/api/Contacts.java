@@ -60,7 +60,6 @@ public class Contacts {
 
             // Loop through the result set and create the Contact List _contacts
             while (rs.next()) {
-                int id = rs.getInt("id");
                 int owner_id = rs.getInt("owner_id");
                 String firstname = rs.getString("firstname");
                 String lastname = rs.getString("lastname");
@@ -73,7 +72,7 @@ public class Contacts {
                 String city = rs.getString("city");
                 String postcode = rs.getString("postcode");
 
-                Contact c = new Contact(id, owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode);
+                Contact c = new Contact(owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode);
                 _contacts.add(c);
             }
             // Close the result set, statement, and connection
@@ -117,7 +116,7 @@ public class Contacts {
      * Delete the contact from the system
      */
     //I must fix the delete Method, because when I delete a contact, does not disappear from _contact_frame.
-    public static void deleteContact(int id) throws SQLException, ClassNotFoundException {
+    public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
         Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
 
@@ -128,38 +127,7 @@ public class Contacts {
         String query = "DELETE FROM contact_table WHERE id = " + id;
         int numRowsAffected = stmt.executeUpdate(query);
         // Check if delete was successful
-        showMessageDialog(null, "The contact deleted successfully", "Delete", JOptionPane.INFORMATION_MESSAGE);
-
-        // Close the result statement, and connection
-        stmt.close();
-        conn.close();
-    }
-
-    /**
-     * Finds the next free number to use as a contact ID. Each contact has a unique ID
-     *
-     * @return a new ID contact
-     */
-    public static int getNextContactId() throws SQLException, ClassNotFoundException {
-        Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
-        List<Integer> ids = new ArrayList<>();
-
-        // Create a statement object
-        Statement stmt = conn.createStatement();
-
-        // Execute the SQL query to delete the contact with the given ID
-        String query = "SELECT id FROM contact_table";
-
-        ResultSet rs = stmt.executeQuery(query);
-        while(rs.next()){
-            ids.add(rs.getInt("id"));
-        }
-        // Close the result set, statement, and connection
-        rs.close();
-        stmt.close();
-        conn.close();
-        return Collections.max(ids) + 1;
+        return numRowsAffected == 1;
     }
 
     public static int getContactsID() throws ClassNotFoundException, SQLException {

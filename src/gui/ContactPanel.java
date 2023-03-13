@@ -258,10 +258,19 @@ public class ContactPanel extends JPanel {
 
                     if (result == JOptionPane.YES_OPTION) {
                         try {
-                            Contacts.deleteContact(Contacts.getContactsID());
+                            if(Contacts.deleteContact(Contacts.getContactsID()))
+                                showMessageDialog(null, "The contact deleted successfully", "Delete", JOptionPane.INFORMATION_MESSAGE);
+                            else
+                                showMessageDialog(null, "Error due to delete contact", "Error", JOptionPane.ERROR_MESSAGE);
+
+                            Contacts.load();
+
+                            if (_onChangeListener != null) {
+                                _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
+                            }
+
                             _contact_frame.dispose();
                             _contact_frame = null;
-                            Contacts.load();
                         } catch (SQLException | ClassNotFoundException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -376,7 +385,7 @@ public class ContactPanel extends JPanel {
         }
 
         if (_contact == null) {
-            _contact = new Contact(Contacts.getNextContactId(), Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
+            _contact = new Contact(Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
             if (!Contacts.addContact(_contact)) {
                 showMessageDialog(null, "Failed to store contact", "Error", JOptionPane.ERROR_MESSAGE);
                 return;

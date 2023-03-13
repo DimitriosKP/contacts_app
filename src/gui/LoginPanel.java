@@ -57,9 +57,7 @@ public class LoginPanel extends JPanel {
 
                     try {
                         new ContactsFrame();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (ClassNotFoundException ex) {
+                    } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
 

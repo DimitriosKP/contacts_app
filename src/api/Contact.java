@@ -6,8 +6,6 @@ public class Contact {
     private int _ownerID = 0;
     private String _firstname = "";
     private String _lastname = "";
-    private String _username = "";
-    private String _password = "";
     private int _day;
     private int _month;
     private int _year;
@@ -32,8 +30,7 @@ public class Contact {
      * @param city      contact's city
      * @param postcode  contact's postcode
      */
-    public Contact(int id, int owner_id, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
-        setId(id);
+    public Contact(int owner_id, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
         setOwner(owner_id);
         setFirstname(firstname);
         setLastname(lastname);
