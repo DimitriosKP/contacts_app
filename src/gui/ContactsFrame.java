@@ -19,7 +19,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
     boolean showingSearchResults=false;
 
     public ContactsFrame() throws SQLException, ClassNotFoundException {
-        setTitle("My Contacts");
+        setTitle(Users.LoggedUser.getUsername()+"'s contacts");
         setSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
 

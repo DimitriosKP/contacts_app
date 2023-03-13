@@ -417,7 +417,7 @@ public class ContactPanel extends JPanel {
         }
         if (view_type == VIEW_TYPE.EDIT){
             if (!Contacts.update(_contact)) {
-                showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
+                showMessageDialog(null, "Update failed", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (_onChangeListener != null) {

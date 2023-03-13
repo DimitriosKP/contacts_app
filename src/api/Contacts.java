@@ -3,7 +3,6 @@ package api;
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -102,13 +101,13 @@ public class Contacts {
             pstmt.setString(8, newContact.getAddress());
             pstmt.setString(9, newContact.getCity());
             pstmt.setString(10, newContact.getPostcode());
-            pstmt.setInt(11, newContact.getID());
+            pstmt.setInt(11, getContactsID());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
                 // handle exception
                 return false;
         }
-
         return true;
     }
 
