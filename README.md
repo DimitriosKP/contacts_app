@@ -17,7 +17,7 @@ This is a desktop application built with Java that allows users to create and ma
 
 ##### Installation
 - Clone the repository to your local machine using git clone https://github.com/DimitriosKP/contact_app.git.
-- Create a new database and table in MySQL by executing the database.sql script included in the project.
+- Create a new database and table in MySQL by executing the contacts.sql script included in the project.
 -	Edit the config.properties file to include your database connection details.
 -	Build the project using javac *.java.
 -	Run the project using java ContactApp.
@@ -25,10 +25,6 @@ This is a desktop application built with Java that allows users to create and ma
 
 ##### Usage
 Upon running the application, you will be prompted to create a new account or log in to an existing one. Once logged in, you can create and manage your contacts using the provided interface.
-
-
-##### Contributing
-Contributions to this project are welcome! If you find a bug or would like to suggest a new feature, please open an issue or submit a pull request.
 
 
 ##### Acknowledgments
