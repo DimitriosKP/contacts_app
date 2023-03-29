@@ -5,11 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class ContactsFrame extends JFrame implements ActionListener {
+    ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("icon.png"));
+
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
@@ -22,8 +24,9 @@ public class ContactsFrame extends JFrame implements ActionListener {
         setTitle(Users.LoggedUser.getUsername()+"'s contacts");
         setSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
-
+        setIconImage(icon.getImage());
         createActionsPanel();
+        setIconImage(icon.getImage());
 
         contactsPanel = new JPanel(cl);
         scrollPane = new JScrollPane(createContactsList(Contacts.getContacts()));
@@ -229,12 +232,12 @@ public class ContactsFrame extends JFrame implements ActionListener {
 
             List<Contact> contacts;   // We want a copy of the original list, so we don't affect it
             try {
-                contacts = new ArrayList<>(Contacts.getContacts());
+                contacts = new LinkedList<>(Contacts.getContacts());
             } catch (SQLException | ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
 
-            List<Contact> to_remove = new ArrayList<>();
+            List<Contact> to_remove = new LinkedList<>();
             for (Contact c : contacts){
                 if (terms.containsKey("firstname") && !terms.get("firstname").isBlank()) {
                     if (!c.getFirstname().toLowerCase().contains(terms.get("firstname").toLowerCase())) {

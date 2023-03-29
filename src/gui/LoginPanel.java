@@ -19,7 +19,7 @@ public class LoginPanel extends JPanel {
     JButton btnLogin = new JButton("Login");
     JButton btnExit = new JButton("Exit");
     JLabel lblError = new JLabel("");
-    JLabel lblRegister = new JLabel("<html><u>Register</u></html>");
+    JLabel lblRegister = new JLabel("<html><u>Create an account</u></html>");
 
     public LoginPanel() {
         setLayout(null);

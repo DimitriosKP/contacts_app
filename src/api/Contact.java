@@ -17,7 +17,6 @@ public class Contact {
     private String _birthday = "";
     /**
      * Creates a new contact
-     * @param id  contact's ID
      * @param owner_id  contact's owner ID
      * @param firstname contact's first name
      * @param lastname  contact's last name

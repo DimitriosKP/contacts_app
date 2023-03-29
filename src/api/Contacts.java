@@ -3,6 +3,7 @@ package api;
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -45,7 +46,7 @@ public class Contacts {
 
     public static void load(){
         try {
-            _contacts = new ArrayList<>();
+            _contacts = new LinkedList<>();
             Connect connection = new Connect();
             Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
 
@@ -157,23 +158,6 @@ public class Contacts {
         if (_contacts == null) load();
         _contacts.add(contact);
         return true;
-    }
-
-    /**
-     * It returns an object of type Contact based on the ID we have given. Returns null if not present.
-     *
-     * @param ID the contact ID
-     * @return An object of type Contact or null
-     */
-    public static Contact getContact(int ID) {
-        if (_contacts == null) load();
-
-        for (Contact c : _contacts) {
-            if (c.getID() == ID) {
-                return c;
-            }
-        }
-        return null;
     }
 
     /**

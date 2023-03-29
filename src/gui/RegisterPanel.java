@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import static javax.swing.JOptionPane.showMessageDialog;
 
 
@@ -26,7 +29,7 @@ public class RegisterPanel extends JPanel {
     JTextField txtConfPassword = new JTextField("");
 
     JButton btnRegister = new JButton("Register");
-    JButton btnCancel = new JButton("Cancel");
+    JLabel lblSignIn = new JLabel("<html><u>Do you already have an account? Sign In!</u></html>");
 
     JLabel lblError =new JLabel("");
 
@@ -70,7 +73,7 @@ public class RegisterPanel extends JPanel {
         txtConfPassword.setBounds(200,230,150,30);
         add(txtConfPassword);
 
-        btnRegister.setBounds(50,280,100,30);
+        btnRegister.setBounds(150,280,100,30);
         add(btnRegister);
 
         btnRegister.addActionListener(new ActionListener() {
@@ -99,8 +102,7 @@ public class RegisterPanel extends JPanel {
                     lblError.setText("Please confirm your password!");
                 }
 
-
-                if(Users.checkPassword(password, cpassword) == false) {
+                if(!Users.checkPassword(password, cpassword)) {
                     JOptionPane.showMessageDialog(null, "Password does not match. Please try again.");
                     txtConfPassword.setBounds(200,230,150,30);
                     txtConfPassword.requestFocus();
@@ -126,12 +128,16 @@ public class RegisterPanel extends JPanel {
             }
         });
 
-        btnCancel.setBounds(240,280,100,30);
-        add(btnCancel);
+        lblSignIn.setBounds(20,330,360,30);
+        lblSignIn.setForeground(Color.BLUE);
+        lblSignIn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        lblSignIn.setHorizontalAlignment(SwingConstants.CENTER);
+        add(lblSignIn);
+        lblSignIn.addMouseListener(new MouseAdapter()
+        {
+            public void mouseClicked(MouseEvent e)
+            {
                 _registerFrame.dispose();
                 _registerFrame = null;
             }
