@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -151,6 +152,7 @@ public class RegisterPanel extends JPanel {
 
     public static void showRegisterForm() {
         RegisterPanel panel = new RegisterPanel();
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
 
         if(_registerFrame == null) {
             _registerFrame = new JFrame();
@@ -161,5 +163,7 @@ public class RegisterPanel extends JPanel {
         }
         _registerFrame.setLocationRelativeTo(null);
         _registerFrame.setVisible(true);
+        _registerFrame.setIconImage(icon.getImage());
+        _registerFrame.setIconImage(icon.getImage());
     }
 }

@@ -9,8 +9,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class LoginPanel extends JPanel {
+    ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
+
     JLabel lblTitle = new JLabel("Contact App");
     JLabel lblUsername = new JLabel("Username");
     JLabel lblPassword = new JLabel("Password");
@@ -44,6 +47,7 @@ public class LoginPanel extends JPanel {
 
         btnLogin.setBounds(50,170,100,30);
         add(btnLogin);
+
 
         btnLogin.addActionListener(new ActionListener() {
             @Override
@@ -104,11 +108,15 @@ public class LoginPanel extends JPanel {
     public static void showLoginForm() {
         LoginPanel lgp = new LoginPanel();
         JFrame jf = new JFrame();
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
+
         jf.setTitle("Contact App");
         jf.add(lgp);
         jf.setSize(new Dimension(360, 300));
         jf.setResizable(false);
         jf.setLocationRelativeTo(null);
         jf.setVisible(true);
+        jf.setIconImage(icon.getImage());
+        jf.setIconImage(icon.getImage());
     }
 }

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -436,6 +437,7 @@ public class ContactPanel extends JPanel {
     public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {
         int width = 600;
         int height = 600;
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(ContactPanel.class.getClassLoader().getResource("icon.png")));
 
         if (_contact_frame != null) {
             _contact_frame.dispose();
@@ -457,5 +459,7 @@ public class ContactPanel extends JPanel {
 
         _contact_frame.setLocationRelativeTo(null);
         _contact_frame.setVisible(true);
+        _contact_frame.setIconImage(icon.getImage());
+        _contact_frame.setIconImage(icon.getImage());
     }
 }

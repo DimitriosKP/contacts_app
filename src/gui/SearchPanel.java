@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SearchPanel extends JPanel {
     static ActionListener  _onSearchListener = null;
@@ -128,6 +129,8 @@ public class SearchPanel extends JPanel {
     public static void showSearchPanel(ActionListener onSearchListener){
         int width = 600;
         int height = 600;
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
+
         _onSearchListener = onSearchListener;
 
         if (_search_frame != null) {
@@ -144,10 +147,10 @@ public class SearchPanel extends JPanel {
 
         _search_frame.add(new JScrollPane(scroll));
         _search_frame.setSize(new Dimension(width, height));
-
         _search_frame.setResizable(false);
-
         _search_frame.setLocationRelativeTo(null);
         _search_frame.setVisible(true);
+        _search_frame.setIconImage(icon.getImage());
+        _search_frame.setIconImage(icon.getImage());
     }
 }

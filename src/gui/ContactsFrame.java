@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ContactsFrame extends JFrame implements ActionListener {
-    ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("icon.png"));
-
+    ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
