@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
-    private static Boolean checkBirthdayChecker = false;
+    private static Boolean message = false;
+    LocalDate lastBirthdayMessageDate = null;
 
     ContactsFrame _contactsFrame;
     JButton btnSearch;
@@ -113,11 +115,10 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 if (!c.isOwner(Users.LoggedUser.getID())) continue;
             }
 
-            if(Contacts.checkBirthday(c.getDay(), c.getMonth()) && !checkBirthdayChecker){
-                showMessageDialog(null, "It's "+c.getFirstname() + " " + c.getLastname() +"'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
-                checkBirthdayChecker = true;
+            if(Contacts.checkBirthday(c.getDay(), c.getMonth()) && !message){
+                showMessageDialog(null, "It's " + c.getFirstname() + " " + c.getLastname() + "'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
+                message = true;
             }
-
             JPanel pane = new JPanel(new GridBagLayout());
             GridBagConstraints g = new GridBagConstraints();
 
