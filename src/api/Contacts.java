@@ -3,6 +3,8 @@ package api;
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -149,17 +151,30 @@ public class Contacts {
         return 1;
     }
 
-        /**
-         * Add a contact to system
-         *
-         * @param contact the object of new contact
-         */
+    /**
+     * Add a contact to system
+     *
+     * @param contact the object of new contact
+     */
     public static boolean addContact(Contact contact) {
         if (_contacts == null) load();
         _contacts.add(contact);
         return true;
     }
 
+    /**
+     * Check if contact has birthday
+     *
+     * @param _day
+     * @param _month
+     * @return
+     */
+    public static boolean checkBirthday(int _day, int _month){
+        Calendar calendar = Calendar.getInstance(); // create a calendar instance
+        int day = calendar.get(Calendar.DAY_OF_MONTH); // get the day of the month
+        int month = calendar.get(Calendar.MONTH) + 1; // get the month
+        return (day == _day && month == _month);
+    }
     /**
      * Returns a list of Contact objects with all registered contacts
      * @return List of objects of type Contact

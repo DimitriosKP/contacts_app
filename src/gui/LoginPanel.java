@@ -58,7 +58,6 @@ public class LoginPanel extends JPanel {
 
                 if(Users.loginUser(username, password)) {
                     //successful login
-
                     try {
                         new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
@@ -120,3 +119,11 @@ public class LoginPanel extends JPanel {
         jf.setIconImage(icon.getImage());
     }
 }
+
+/*
+    for(Contact c : contacts){
+        if(Contacts.getBirthday(c.getDay(), c.getMonth())){
+            showMessageDialog(null, "It's "+c.getFirstname() + " " + c.getLastname() +"'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+ */

@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 public class ContactsFrame extends JFrame implements ActionListener {
     ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
+    private static Boolean checkBirthdayChecker = false;
 
     ContactsFrame _contactsFrame;
     JButton btnSearch;
@@ -93,7 +96,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
         });
 
         add(actionsPanel, BorderLayout.NORTH);
-
     }
 
     /**
@@ -109,6 +111,11 @@ public class ContactsFrame extends JFrame implements ActionListener {
         for(Contact c : contacts) {
             if (Users.LoggedUser.isUser()) {
                 if (!c.isOwner(Users.LoggedUser.getID())) continue;
+            }
+
+            if(Contacts.checkBirthday(c.getDay(), c.getMonth()) && !checkBirthdayChecker){
+                showMessageDialog(null, "It's "+c.getFirstname() + " " + c.getLastname() +"'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
+                checkBirthdayChecker = true;
             }
 
             JPanel pane = new JPanel(new GridBagLayout());
@@ -154,7 +161,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        ContactsFrame cf = new ContactsFrame();
+                        new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -198,7 +205,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
             contactsPanel.add(pane, gbc);
         }
         return contactsPanel;
-
     }
     /**
      * Creates the list of all contacts after modification
