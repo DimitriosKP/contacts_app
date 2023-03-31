@@ -2,9 +2,7 @@ package api;
 
 import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -167,7 +165,7 @@ public class Contacts {
      *
      * @param _day
      * @param _month
-     * @return
+     * @return true if is contacts birthday
      */
     public static boolean checkBirthday(int _day, int _month){
         Calendar calendar = Calendar.getInstance(); // create a calendar instance

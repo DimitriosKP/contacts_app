@@ -5,11 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -18,9 +15,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
-    private static Boolean message = false;
-    LocalDate lastBirthdayMessageDate = null;
-
     ContactsFrame _contactsFrame;
     JButton btnSearch;
     boolean showingSearchResults=false;
@@ -81,6 +75,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     ContactPanel.showContactForm(null, ContactPanel.VIEW_TYPE.NEW, _contactsFrame);
+                    _contactsFrame.dispose();
                 }
             });
         }
@@ -115,10 +110,10 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 if (!c.isOwner(Users.LoggedUser.getID())) continue;
             }
 
-            if(Contacts.checkBirthday(c.getDay(), c.getMonth()) && !message){
+            if(Contacts.checkBirthday(c.getDay(), c.getMonth())) {
                 showMessageDialog(null, "It's " + c.getFirstname() + " " + c.getLastname() + "'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
-                message = true;
             }
+
             JPanel pane = new JPanel(new GridBagLayout());
             GridBagConstraints g = new GridBagConstraints();
 
@@ -148,7 +143,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
             g.insets = new Insets(0,10,0,0);
             pane.add(lblEmail, g);
 
-            JLabel lblAddress = new JLabel(c.getAddress() + ", " + c.getCity() + ", " + c.getPostcode());
+            JLabel lblAddress = new JLabel((!c.getAddress().isBlank() ? c.getAddress() + ", " + c.getCity() + ", " + c.getPostcode() : c.getCity() + ", " + c.getPostcode()));
             lblAddress.setFont(new Font("Verdana", Font.PLAIN , 14));
             g.fill = GridBagConstraints.HORIZONTAL;
             g.gridx = 2;
@@ -183,6 +178,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     ContactPanel.showContactForm(c, view_type, _contactsFrame);
                 }
             });
+
             // effects when clicked
             pane.addMouseListener(new MouseAdapter() {
                 @Override

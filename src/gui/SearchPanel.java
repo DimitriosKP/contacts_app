@@ -100,7 +100,7 @@ public class SearchPanel extends JPanel {
 
         top+=50;
         JButton btnSearch = new JButton("Search");
-        btnSearch.setBounds(150, top,300,30);
+        btnSearch.setBounds(left + 90, top, 120, 30);
         add(btnSearch);
 
         btnSearch.addActionListener(new ActionListener() {
@@ -120,6 +120,18 @@ public class SearchPanel extends JPanel {
                 _search_frame.dispose();
             }
         });
+
+        JButton btnCancel = new JButton("Cancel");
+        btnCancel.setBounds(left + 270, top, 120, 30);
+        add(btnCancel);
+
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _search_frame.dispose();
+            }
+        });
+
 
     }
 

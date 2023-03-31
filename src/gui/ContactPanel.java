@@ -79,7 +79,7 @@ public class ContactPanel extends JPanel {
             lblTitle.setText("Add Contact");
         }
         else{
-            lblTitle.setText("Show Contact");
+            lblTitle.setText("Contact's Details");
         }
 
         int top = 10;
@@ -220,7 +220,11 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        store(view_type);
+                        if (store(view_type)) {
+                            new ContactsFrame();
+                        } else {
+                            _contact_frame.setVisible(true);
+                        }
                     } catch (ClassNotFoundException | SQLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -230,6 +234,11 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
 
@@ -242,6 +251,16 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     ContactPanel.showContactForm(contact, ContactPanel.VIEW_TYPE.EDIT, onChangeListener);
+                }
+            });
+
+            btnCancel.setBounds(left + 380, top, 120, 30);
+            add(btnCancel);
+
+            btnCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _contact_frame.dispose();
                 }
             });
         }
@@ -346,50 +365,50 @@ public class ContactPanel extends JPanel {
         return -1;
     }
 
-    private void store(VIEW_TYPE view_type) throws SQLException, ClassNotFoundException {
+    private boolean store(VIEW_TYPE view_type) throws SQLException, ClassNotFoundException {
         if (txtFname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts first name", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         if (txtLname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts last name", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
 
         /*
         if (txtAddress.getText().isBlank()){
             showMessageDialog(null, "Please enter the contacts address", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }*/
+        }
+        */
+
+        if (!txtEmail.getText().isBlank() && !txtEmail.getText().contains("@")){
+            showMessageDialog(null, "Please enter an email address", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
         if (txtPhone.getText().isBlank()) {
             showMessageDialog(null, "Please enter a phone number", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         if (!txtPhone.getText().matches("[0-9]+")) {
             showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         if (txtPhone.getText().startsWith("69")) {
             if(txtPhone.getText().length() != 10) {
                 showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return false;
             }
         }
-        if (txtEmail.getText().isBlank()){
-            showMessageDialog(null, "Please enter an email address", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (!txtEmail.getText().contains("@")) {
-            showMessageDialog(null, "Please check your email address", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+
+
 
         if (_contact == null) {
             _contact = new Contact(Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
             if (!Contacts.addContact(_contact)) {
                 showMessageDialog(null, "Failed to store contact", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return false;
             }
         } else {
             _contact.setOwner(Users.LoggedUser.getID());
@@ -409,7 +428,7 @@ public class ContactPanel extends JPanel {
         if(view_type == VIEW_TYPE.NEW) {
             if (!Contacts.store(_contact)) {
                 showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return false;
             }
             if (_onChangeListener != null) {
                 _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
@@ -419,7 +438,7 @@ public class ContactPanel extends JPanel {
         if (view_type == VIEW_TYPE.EDIT){
             if (!Contacts.update(_contact)) {
                 showMessageDialog(null, "Update failed", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return false;
             }
             if (_onChangeListener != null) {
                 _onChangeListener.actionPerformed(new ActionEvent(_contact_frame, 1, ""));
@@ -432,6 +451,8 @@ public class ContactPanel extends JPanel {
 
         _contact_frame.dispose();
         _contact_frame=null;
+
+        return true;
     }
 
     public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {

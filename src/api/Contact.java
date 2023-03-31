@@ -49,33 +49,12 @@ public class Contact {
     }
 
     /**
-     * Returns the contact's ID
-     *
-     * @return The contact's ID
-     */
-    public int getID(){
-        return _id;
-    }
-
-    /**
-     * Returns the contact's owners ID
-     *
-     * @return The contact's owners ID
-     */
-    public int getOwnerID(){
-        return _id;
-    }
-
-    /**
      * Sets the Owner's user_id
      *
      * @param user_id The Owner's user_id
      */
     public void setOwner(int user_id){
         _ownerID = user_id;
-    }
-    public int getOwner(){
-        return _ownerID;
     }
     public boolean isOwner(int user_id){
         return _ownerID == user_id;
