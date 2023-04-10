@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class LoginPanel extends JPanel {
-    ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
-
     JLabel lblTitle = new JLabel("Contact App");
     JLabel lblUsername = new JLabel("Username");
     JLabel lblPassword = new JLabel("Password");
@@ -47,7 +45,6 @@ public class LoginPanel extends JPanel {
 
         btnLogin.setBounds(50,170,100,30);
         add(btnLogin);
-
 
         btnLogin.addActionListener(new ActionListener() {
             @Override
@@ -88,10 +85,8 @@ public class LoginPanel extends JPanel {
 
         lblRegister.setHorizontalAlignment(SwingConstants.CENTER);
         add(lblRegister);
-        lblRegister.addMouseListener(new MouseAdapter()
-        {
-            public void mouseClicked(MouseEvent e)
-            {
+        lblRegister.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
                 RegisterPanel.showRegisterForm();
             }
         });
@@ -109,7 +104,7 @@ public class LoginPanel extends JPanel {
         JFrame jf = new JFrame();
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
 
-        jf.setTitle("Contact App");
+        jf.setTitle("Login");
         jf.add(lgp);
         jf.setSize(new Dimension(360, 300));
         jf.setResizable(false);

@@ -1,8 +1,5 @@
 package api;
 
-
-import java.util.Calendar;
-
 public class Contact {
     private int _id;
     private int _ownerID = 0;

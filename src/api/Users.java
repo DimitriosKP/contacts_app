@@ -17,7 +17,7 @@ public class Users {
      *
      * @return True if saved
      */
-    public static boolean store() throws ClassNotFoundException, SQLException {
+    public static boolean store() throws ClassNotFoundException {
         Connect connection = new Connect();
 
         if (_users.isEmpty()) return true;
@@ -31,7 +31,6 @@ public class Users {
                 pstmt.setString(4, u.getFirstname());
                 pstmt.setString(5, u.getLastname());
                 pstmt.executeUpdate();
-
             } catch (SQLException e) {
                 // handle exception
             }
@@ -132,5 +131,29 @@ public class Users {
         _users.add(user);
 
         return Users.store();
+    }
+
+    public static int checkStrongPassword(JTextField pass) {
+        String password = pass.getText();
+        // Check for at least one uppercase letter
+        if (password.isBlank()) {
+            return 0;
+        }
+        // Check for at least one uppercase letter
+        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && password.matches(".*\\d.*")) {
+            return 1;
+        }
+        // Check for at least one special character
+        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+            return 2;
+        }
+        // Check for at least one number
+        if (password.matches(".*[A-Z].*") && password.matches(".*\\d.*")) {
+            return 3;
+        }
+        if (password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && password.matches(".*\\d.*"))
+            return 4;
+        // Password meets all requirements
+        return 5;
     }
 }

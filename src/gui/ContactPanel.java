@@ -74,11 +74,9 @@ public class ContactPanel extends JPanel {
 
         if (view_type == VIEW_TYPE.EDIT) {
             lblTitle.setText("Edit Contact");
-        }
-        else if (view_type == VIEW_TYPE.NEW) {
+        } else if (view_type == VIEW_TYPE.NEW) {
             lblTitle.setText("Add Contact");
-        }
-        else{
+        } else {
             lblTitle.setText("Contact's Details");
         }
 
@@ -209,7 +207,7 @@ public class ContactPanel extends JPanel {
                 }
             });
         }
-        if(view_type == VIEW_TYPE.NEW){
+        if(view_type == VIEW_TYPE.NEW) {
             btnSave.setBounds(left + 180, top, 120, 30);
             add(btnSave);
 
@@ -402,8 +400,6 @@ public class ContactPanel extends JPanel {
             }
         }
 
-
-
         if (_contact == null) {
             _contact = new Contact(Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
             if (!Contacts.addContact(_contact)) {
@@ -435,7 +431,7 @@ public class ContactPanel extends JPanel {
             }
             showMessageDialog(null, "The contact saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
         }
-        if (view_type == VIEW_TYPE.EDIT){
+        if (view_type == VIEW_TYPE.EDIT) {
             if (!Contacts.update(_contact)) {
                 showMessageDialog(null, "Update failed", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;

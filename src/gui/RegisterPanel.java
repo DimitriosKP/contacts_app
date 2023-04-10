@@ -3,16 +3,17 @@ package gui;
 import api.Users;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static javax.swing.JOptionPane.showMessageDialog;
-
-
 
 public class RegisterPanel extends JPanel {
 
@@ -31,7 +32,7 @@ public class RegisterPanel extends JPanel {
 
     JButton btnRegister = new JButton("Register");
     JLabel lblSignIn = new JLabel("<html><u>Do you already have an account? Sign In!</u></html>");
-
+    JLabel lblPasMessage = new JLabel("Hello");
     JLabel lblError =new JLabel("");
 
     static JFrame _registerFrame = null;
@@ -50,31 +51,101 @@ public class RegisterPanel extends JPanel {
         txtFirstname.setBounds(200,70,150,30);
         add(txtFirstname);
 
-        lblLastname.setBounds(50,110,100,30);
+        lblLastname.setBounds(50,130,100,30);
         add(lblLastname);
 
-        txtLastname.setBounds(200,110,150,30);
+        txtLastname.setBounds(200,130,150,30);
         add(txtLastname);
 
-        lblUsername.setBounds(50,150,100,30);
+        lblUsername.setBounds(50,190,100,30);
         add(lblUsername);
 
-        txtUsername.setBounds(200,150,150,30);
+        txtUsername.setBounds(200,190,150,30);
         add(txtUsername);
 
-        lblPassword.setBounds(50,190,100,30);
+        lblPassword.setBounds(50,250,100,30);
         add(lblPassword);
 
-        txtPassword.setBounds(200,190,150,30);
+        txtPassword.setBounds(200,250,150,30);
         add(txtPassword);
 
-        lblConfPassword.setBounds(50,230,120,30);
+        lblPasMessage.setBounds(200, 275 , 150, 30);
+        // Create a new DocumentListener
+        DocumentListener passwordListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                checkPassword();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                checkPassword();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                checkPassword();
+            }
+
+            public void checkPassword() {
+                // Check the strength of the password
+                int strength = Users.checkStrongPassword(txtPassword);
+                // Set the label text based on the password strength
+                switch (strength) {
+                    case 0:
+                        lblPasMessage.setText("");
+                        break;
+                    case 1:
+                        lblPasMessage.setText("Strong");
+                        lblPasMessage.setForeground(Color.green);
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                        lblPasMessage.setText("Medium");
+                        lblPasMessage.setForeground(Color.orange);
+                        break;
+                    default:
+                        lblPasMessage.setText("Weak");
+                        lblPasMessage.setForeground(Color.red);
+                        break;
+                }
+                // Add the label to the frame if it hasn't already been added
+                if (!Arrays.asList(getComponents()).contains(lblPasMessage)) {
+                    add(lblPasMessage);
+                }
+            }
+        };
+
+        // Add the DocumentListener to the JTextField
+        txtPassword.getDocument().addDocumentListener(passwordListener);
+
+        // Set the initial text of the label based on the strength of the password
+        switch (Users.checkStrongPassword(txtPassword)) {
+            case 0:
+                lblPasMessage.setText("");
+                add(lblPasMessage);
+                break;
+            case 1:
+                lblPasMessage.setText("Strong");
+                add(lblPasMessage);
+                break;
+            case 2 ,3, 4:
+                lblPasMessage.setText("Medium");
+                add(lblPasMessage);
+                break;
+            default:
+                lblPasMessage.setText("Weak");
+                add(lblPasMessage);
+                break;
+        }
+        lblPasMessage.setBounds(200, 275, 150, 30);
+
+        // Add the DocumentListener to the JTextField
+        txtPassword.getDocument().addDocumentListener(passwordListener);
+
+        lblConfPassword.setBounds(50,310,120,30);
         add(lblConfPassword);
 
-        txtConfPassword.setBounds(200,230,150,30);
+        txtConfPassword.setBounds(200,310,150,30);
         add(txtConfPassword);
 
-        btnRegister.setBounds(150,280,100,30);
+        btnRegister.setBounds(150,370,100,30);
         add(btnRegister);
 
         btnRegister.addActionListener(new ActionListener() {
@@ -87,25 +158,25 @@ public class RegisterPanel extends JPanel {
                 String password = txtPassword.getText();
                 String cpassword = txtConfPassword.getText();
 
-                if(firstname.isBlank()){
+                if(firstname.isBlank()) {
                     lblError.setText("Please enter your first name!");
                 }
-                if(lastname.isBlank()){
+                if(lastname.isBlank()) {
                     lblError.setText("Please enter your last name!");
                 }
-                if(username.isBlank()){
+                if(username.isBlank()) {
                     lblError.setText("Please enter your username!");
                 }
-                if(password.isBlank()){
+                if(password.isBlank()) {
                     lblError.setText("Please enter your password!");
                 }
-                if(cpassword.isBlank()){
+                if(cpassword.isBlank()) {
                     lblError.setText("Please confirm your password!");
                 }
 
                 if(!Users.checkPassword(password, cpassword)) {
-                    JOptionPane.showMessageDialog(null, "Password does not match. Please try again.");
-                    txtConfPassword.setBounds(200,230,150,30);
+                    JOptionPane.showMessageDialog(null, "Password does not match!");
+                    txtConfPassword.setBounds(200,290,150,30);
                     txtConfPassword.requestFocus();
                     return;
                 }
@@ -122,14 +193,13 @@ public class RegisterPanel extends JPanel {
                     showMessageDialog(null, "The registration complete successfully!");
                     _registerFrame.dispose();
                     _registerFrame = null;
-                }
-                else {
+                } else {
                     lblError.setText("An error occurred while registering the user");
                 }
             }
         });
 
-        lblSignIn.setBounds(20,330,360,30);
+        lblSignIn.setBounds(20,430,360,30);
         lblSignIn.setForeground(Color.BLUE);
         lblSignIn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -144,7 +214,7 @@ public class RegisterPanel extends JPanel {
             }
         });
 
-        lblError.setBounds(0,320,360,30);
+        lblError.setBounds(0,380,360,30);
         lblError.setHorizontalAlignment(SwingConstants.CENTER);
         lblError.setForeground(Color.red);
         add(lblError);
@@ -158,7 +228,7 @@ public class RegisterPanel extends JPanel {
             _registerFrame = new JFrame();
             _registerFrame.setTitle("Register");
             _registerFrame.add(panel);
-            _registerFrame.setSize(new Dimension(400, 400));
+            _registerFrame.setSize(new Dimension(400, 500));
             _registerFrame.setResizable(false);
         }
         _registerFrame.setLocationRelativeTo(null);
