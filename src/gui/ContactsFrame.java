@@ -5,7 +5,10 @@ import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -13,6 +16,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -87,6 +91,54 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 }
             });
         }
+
+        JButton btnExport = new JButton("Export");
+        actionsPanel.add(btnExport);
+
+        btnExport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) throws RuntimeException{
+                // Fetch data from database using JDBC
+                Connect connection = null;
+                try {
+                    connection = new Connect();
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                String query = "SELECT * FROM contact_table";
+
+                try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                     Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery(query)) {
+                    // Format data as CSV and save to file in Downloads folder
+                    String downloadsFolderPath = System.getProperty("user.home") + File.separator + "Downloads";
+                    String filePath = downloadsFolderPath + File.separator + "data.csv";
+                    FileWriter fileWriter = new FileWriter(filePath);
+
+                    while (rs.next()) {
+                        String firstline = "ID"+","+"Firstname"+","+"Lastname"+","+"email"+","+"Birthday"+","+"Address"+","+"City"+","+"Postcode"+"\n";
+                        String id = rs.getString("id");
+                        String firstname = rs.getString("firstname");
+                        String lastname = rs.getString("lastname");
+                        String email = rs.getString("email");
+                        String day = rs.getString("day");
+                        String month = rs.getString("month");
+                        String year = rs.getString("year");
+                        String address = rs.getString("address");
+                        String city = rs.getString("city");
+                        String postcode = rs.getString("city");
+                        String line = id + ", " + firstname + ", " + lastname + ", " + email + ", " + day+"/"+month+"/"+year + ", " +
+                                address + ", " + city +", " + postcode + "\n";
+                        fileWriter.write(firstline+line);
+                    }
+                    fileWriter.close();
+                    JOptionPane.showMessageDialog(contactsPanel, "Data exported to data.csvuser1    ", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } catch (SQLException | IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(contactsPanel, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         JButton btnLogout = new JButton("Logout");
         actionsPanel.add(btnLogout);
