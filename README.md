@@ -5,7 +5,7 @@ This is a desktop application built with Java that allows users to create and ma
 
 ###### Features:
 -	Users can create an account and log in to access their contact list.
--	Each user can create, edit, delete, and search contacts.
+-	Each user can create, edit, export, delete, and search contacts.
 -	Contacts are stored in a database using JDBC, ensuring data persistence across application sessions.
 
 
