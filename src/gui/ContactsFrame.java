@@ -200,8 +200,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        new ContactsFrame();
+                    try { new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -242,7 +241,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     jp.validate();
                 }
             });
-
             contactsPanel.add(pane, gbc);
         }
         return contactsPanel;
@@ -264,7 +262,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
         contactsPanel.remove(scrollPane);
         scrollPane = new JScrollPane(createContactsList(contacts));
         contactsPanel.add(scrollPane);
-
         contactsPanel.invalidate();
         contactsPanel.validate();
         this.repaint();
@@ -274,7 +271,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e == null) return;
 
-        if (e.getActionCommand().equals("SEARCH")){
+        if (e.getActionCommand().equals("SEARCH")) {
             Map<String,String> terms = ((SearchPanel)e.getSource()).getSearchTerms();
 
             List<Contact> contacts;   // We want a copy of the original list, so we don't affect it
@@ -323,10 +320,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
             showingSearchResults=true;
             btnSearch.setText("All contacts");
             return;
-
         }
-        try {
-            reloadContacts();
+        try { reloadContacts();
         } catch (SQLException | ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }

@@ -24,7 +24,7 @@ public class Users {
         if (_users.isEmpty()) return true;
         for (User u : _users) {
             String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            try (Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, u.getID());
                 pstmt.setString(2, u.getPassword());
@@ -48,7 +48,7 @@ public class Users {
         try {
             _users = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -94,7 +94,7 @@ public class Users {
 
     public static int getNextUserId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
         List<Integer> ids = new ArrayList<>();
 
         // Create a statement object
@@ -184,21 +184,17 @@ public class Users {
     public static int checkStrongPassword(JTextField pass) {
         String password = pass.getText();
         // Check for at least one uppercase letter
-        if (password.isBlank()) {
+        if (password.isBlank())
             return 0;
-        }
         // Check for at least one uppercase letter
-        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && password.matches(".*\\d.*")) {
+        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && password.matches(".*\\d.*"))
             return 1;
-        }
         // Check for at least one special character
-        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+        if (password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*"))
             return 2;
-        }
         // Check for at least one number
-        if (password.matches(".*[A-Z].*") && password.matches(".*\\d.*")) {
+        if (password.matches(".*[A-Z].*") && password.matches(".*\\d.*"))
             return 3;
-        }
         if (password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && password.matches(".*\\d.*"))
             return 4;
         // Password meets all requirements

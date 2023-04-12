@@ -231,8 +231,7 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
-                    try {
-                        new ContactsFrame();
+                    try { new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -332,7 +331,6 @@ public class ContactPanel extends JPanel {
 
         txtPostcode.setText(_contact.getPostcode());
         txtPostcode.setEditable(can_edit);
-
     }
     private int selectedDay(int value) {
         for (int i=0; i < day.getItemCount(); i++) {
@@ -443,7 +441,6 @@ public class ContactPanel extends JPanel {
 
         // We need to inform the main form that a change has been made so that it reloads the results.
         // We do it through the listener we defined when creating the window
-
         _contact_frame.dispose();
         _contact_frame=null;
 
@@ -458,7 +455,7 @@ public class ContactPanel extends JPanel {
         if (_contact_frame != null) {
             _contact_frame.dispose();
         }
-        ContactPanel panel = new ContactPanel(contact, view_type, onChangeListener );
+        ContactPanel panel = new ContactPanel(contact, view_type, onChangeListener);
         _contact_frame = new JFrame();
 
         _contact_frame.setTitle("Contact");
@@ -470,7 +467,6 @@ public class ContactPanel extends JPanel {
 
         _contact_frame.add(new JScrollPane(scroll));
         _contact_frame.setSize(new Dimension(width, height));
-
         _contact_frame.setResizable(false);
 
         _contact_frame.setLocationRelativeTo(null);

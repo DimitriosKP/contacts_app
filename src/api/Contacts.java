@@ -2,9 +2,6 @@ package api;
 
 import javax.swing.*;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,12 +17,12 @@ public class Contacts {
      *
      * @return True if saved
      */
-    public static boolean store(Contact newContact) throws ClassNotFoundException, SQLException {
+    public static boolean store(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
         String query = "INSERT INTO contact_table (owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode ) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, Users.LoggedUser.getID());
             pstmt.setString(2, newContact.getFirstname());
@@ -51,7 +48,7 @@ public class Contacts {
         try {
             _contacts = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -89,11 +86,11 @@ public class Contacts {
         }
     }
 
-    public static boolean update(Contact newContact) throws ClassNotFoundException, SQLException {
+    public static boolean update(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
         String query = "UPDATE contact_table SET firstname = ?, lastname = ?, day = ?, month = ?, year = ?, phone = ?, email = ?, address = ?, city = ?, postcode = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, newContact.getFirstname());
             pstmt.setString(2, newContact.getLastname());
@@ -109,8 +106,8 @@ public class Contacts {
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
-                // handle exception
-                return false;
+            // handle exception
+            return false;
         }
         return true;
     }
@@ -118,7 +115,7 @@ public class Contacts {
     //Delete the contact from the system
     public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
 
         // Create a statement object
         Statement stmt = conn.createStatement();
@@ -135,7 +132,7 @@ public class Contacts {
 
         String query = "SELECT id FROM contact_table";
 
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next())
@@ -167,12 +164,13 @@ public class Contacts {
      * @param _month
      * @return true if is contacts birthday
      */
-    public static boolean checkBirthday(int _day, int _month){
+    public static boolean checkBirthday(int _day, int _month) {
         Calendar calendar = Calendar.getInstance(); // create a calendar instance
         int day = calendar.get(Calendar.DAY_OF_MONTH); // get the day of the month
         int month = calendar.get(Calendar.MONTH) + 1; // get the month
         return (day == _day && month == _month);
     }
+
     /**
      * Returns a list of Contact objects with all registered contacts
      * @return List of objects of type Contact

@@ -249,6 +249,11 @@ public class Contact {
         _birthday = _day + "/" + _month + "/" + _year;
         return _birthday;
     }
+
+    /**
+     *
+     * @return the date that the contact was saved
+     */
     public String getDateOfSave() {
         LocalDate currentDate = LocalDate.now();
         DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
