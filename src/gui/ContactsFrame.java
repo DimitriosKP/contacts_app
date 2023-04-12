@@ -141,6 +141,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
         });
 
         JButton btnLogout = new JButton("Logout");
+        btnLogout.setForeground(Color.red);
         actionsPanel.add(btnLogout);
 
         btnLogout.addActionListener(new ActionListener() {
