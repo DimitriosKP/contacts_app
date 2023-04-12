@@ -2,6 +2,9 @@ package api;
 
 import javax.swing.*;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,10 +115,7 @@ public class Contacts {
         return true;
     }
 
-    /**
-     * Delete the contact from the system
-     */
-    //I must fix the delete Method, because when I delete a contact, does not disappear from _contact_frame.
+    //Delete the contact from the system
     public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
         Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");

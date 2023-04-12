@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -38,9 +39,14 @@ public class Users {
         return true;
     }
 
+    /**
+     * Load the new contacts from database.
+     *
+     * @return True if saved
+     */
     public static void load() {
         try {
-            _users = new ArrayList<>();
+            _users = new LinkedList<>();
             Connect connection = new Connect();
             Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
 
@@ -71,6 +77,12 @@ public class Users {
         }
     }
 
+    /**
+     * Check if the username exists in database.
+     *
+     * @param username
+     * @return true if exists.
+     */
     public static boolean usernameExists(String username) {
         for (User u : _users) {
             if (u.getUsername().equals(username.trim())) {
@@ -102,10 +114,23 @@ public class Users {
         return Collections.max(ids) + 1;
     }
 
+    /**
+     * Check the password.
+     *
+     * @return True if saved
+     */
     public static boolean checkPassword(String password, String cpassword) {
         return password.equals(cpassword);
     }
 
+    /**
+     * Check users username and password.
+     *
+     * @param username
+     * @param password
+     *
+     * @return True if the parameters are in the database. True if the parameters are in the database. So the user is logged in.
+     */
     public static boolean loginUser(String username, String password) {
         LoggedUser = null;
 
@@ -121,6 +146,18 @@ public class Users {
         return false;
     }
 
+    /**
+     * Create a new User object.
+     *
+     * @param username
+     * @param password
+     * @param firstname
+     * @param lastname
+     *
+     * Checks if the username is already exist by using the function usernameExists.
+     *
+     * @return the store of the new user
+     */
     public static boolean registerUser(String username, String password, String firstname, String lastname) throws Exception {
         if (_users == null) Users.load();
 
@@ -133,6 +170,17 @@ public class Users {
         return Users.store();
     }
 
+    /**
+     * Checks the strength of the password.
+     *
+     * @param pass
+     *
+     * @return 0 if the field is blank.
+     * @return 1 if the password contains lowercase-uppercase letters, numbers, symbols.
+     * @return 2 if the password contains lowercase-uppercase letters, symbols.
+     * @return 3 if the password contains lowercase-uppercase letters, numbers.
+     * @return 4 if the password contains, symbols.
+     */
     public static int checkStrongPassword(JTextField pass) {
         String password = pass.getText();
         // Check for at least one uppercase letter

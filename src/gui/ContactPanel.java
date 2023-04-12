@@ -75,7 +75,7 @@ public class ContactPanel extends JPanel {
         if (view_type == VIEW_TYPE.EDIT) {
             lblTitle.setText("Edit Contact");
         } else if (view_type == VIEW_TYPE.NEW) {
-            lblTitle.setText("Add Contact");
+            lblTitle.setText("Add new contact");
         } else {
             lblTitle.setText("Contact's Details");
         }
@@ -130,8 +130,7 @@ public class ContactPanel extends JPanel {
             txtBirthday.setText(_contact.setBirthday(_contact.getDay(), _contact.getMonth(), _contact.getYear()));
             txtBirthday.setEditable(false);
             add(txtBirthday);
-        }
-        else if (view_type == VIEW_TYPE.NEW || view_type == VIEW_TYPE.EDIT) {
+        }  else if (view_type == VIEW_TYPE.NEW || view_type == VIEW_TYPE.EDIT) {
             for (int i = 1; i <= 31; i++) { day.addItem(i); }
             for (int i = 1; i <= 12; i++) { month.addItem(i); }
             for (int i = 1951; i <= LocalDate.now().getYear(); i++) { year.addItem(i); }
@@ -380,7 +379,7 @@ public class ContactPanel extends JPanel {
         }
         */
 
-        if (!txtEmail.getText().isBlank() && !txtEmail.getText().contains("@")){
+        if (!txtEmail.getText().isBlank() && !txtEmail.getText().contains("@")) {
             showMessageDialog(null, "Please enter an email address", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }

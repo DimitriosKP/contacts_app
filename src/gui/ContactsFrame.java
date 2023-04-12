@@ -2,9 +2,16 @@ package gui;
 import api.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -17,6 +24,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
     JScrollPane scrollPane;
     ContactsFrame _contactsFrame;
     JButton btnSearch;
+    JLabel label = new JLabel();
     boolean showingSearchResults=false;
 
     public ContactsFrame() throws SQLException, ClassNotFoundException {
@@ -93,6 +101,24 @@ public class ContactsFrame extends JFrame implements ActionListener {
         });
 
         add(actionsPanel, BorderLayout.NORTH);
+
+        // Create a Timer to update the JLabel every second
+        LocalDate date = LocalDate.now();
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = dateFormatter.format(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LocalTime now = LocalTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String formattedTime = now.format(formatter);
+
+                // Update the text of the JLabel with the current time and date
+                label.setText(formattedTime + ", " + formattedDate);
+            }
+        });
+        timer.start();
+        add(label, BorderLayout.SOUTH);
     }
 
     /**
@@ -143,6 +169,15 @@ public class ContactsFrame extends JFrame implements ActionListener {
             g.insets = new Insets(0,10,0,0);
             pane.add(lblEmail, g);
 
+            JLabel lblBirthday = new JLabel("Birthday at " + c.getDay()+"/"+c.getMonth()+"/"+c.getYear());
+            lblBirthday.setFont(new Font("Verdana", Font.PLAIN , 12));
+            g.fill = GridBagConstraints.HORIZONTAL;
+            g.gridx = 2;
+            g.gridy = 0;
+            g.gridheight = 0;
+            g.weightx = 0.2;
+            pane.add(lblBirthday, g);
+
             JLabel lblAddress = new JLabel((!c.getAddress().isBlank() ? c.getAddress() + ", " + c.getCity() + ", " + c.getPostcode() : c.getCity() + ", " + c.getPostcode()));
             lblAddress.setFont(new Font("Verdana", Font.PLAIN , 14));
             g.fill = GridBagConstraints.HORIZONTAL;
@@ -151,6 +186,15 @@ public class ContactsFrame extends JFrame implements ActionListener {
             g.gridheight = 0;
             g.weightx = 0.2;
             pane.add(lblAddress, g);
+
+            JLabel lblDateOfSave = new JLabel("The contact saved at: " + c.getDateOfSave());
+            lblDateOfSave.setFont(new Font("Verdana", Font.ITALIC , 10));
+            g.fill = GridBagConstraints.HORIZONTAL;
+            g.gridx = 0;
+            g.gridy = 2;
+            g.gridheight = 0;
+            g.weightx = 0.2;
+            pane.add(lblDateOfSave, g);
 
             JButton btnEdit = new JButton("Edit");
             btnEdit.addActionListener(new ActionListener() {

@@ -1,5 +1,10 @@
 package api;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+
 public class Contact {
     private int _id;
     private int _ownerID = 0;
@@ -243,5 +248,11 @@ public class Contact {
     public String setBirthday(int _day, int _month, int _year) {
         _birthday = _day + "/" + _month + "/" + _year;
         return _birthday;
+    }
+    public String getDateOfSave() {
+        LocalDate currentDate = LocalDate.now();
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        return dateFormatter.format(Date.valueOf(currentDate));
     }
 }
