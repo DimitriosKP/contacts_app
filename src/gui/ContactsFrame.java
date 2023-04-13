@@ -22,6 +22,8 @@ import java.util.List;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class ContactsFrame extends JFrame implements ActionListener {
+    private static List<Contact> _contacts;
+
     ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
@@ -53,11 +55,13 @@ public class ContactsFrame extends JFrame implements ActionListener {
     /**
     * Creates the action bar of the logged-in user
     * */
-    private void createActionsPanel() {
+    private void createActionsPanel() throws SQLException, ClassNotFoundException {
         JPanel actionsPanel = new JPanel();
 
         if (Users.LoggedUser.isUser()) {
             btnSearch = new JButton("Search");
+            _contacts = Contacts.load();
+            btnSearch.setEnabled(_contacts.size() != 0);
             actionsPanel.add(btnSearch);
 
             btnSearch.addActionListener(new ActionListener() {
@@ -93,11 +97,13 @@ public class ContactsFrame extends JFrame implements ActionListener {
         }
 
         JButton btnExport = new JButton("Export");
+        _contacts = Contacts.load();
+        btnExport.setEnabled(_contacts.size() != 0);
         actionsPanel.add(btnExport);
 
         btnExport.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) throws RuntimeException{
+            public void actionPerformed(ActionEvent e) {
                 // Fetch data from database using JDBC
                 Connect connection = null;
                 try {
@@ -105,34 +111,40 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 } catch (ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
-                String query = "SELECT * FROM contact_table";
+                String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table";
 
                 try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
                      Statement stmt = conn.createStatement();
                      ResultSet rs = stmt.executeQuery(query)) {
-                    // Format data as CSV and save to file in Downloads folder
+                    // Format data as VCF and save to file in Downloads folder
                     String downloadsFolderPath = System.getProperty("user.home") + File.separator + "Downloads";
-                    String filePath = downloadsFolderPath + File.separator + "data.csv";
+                    String filePath = downloadsFolderPath + File.separator + "data.vcf";
                     FileWriter fileWriter = new FileWriter(filePath);
 
                     while (rs.next()) {
-                        String firstline = "ID"+","+"Firstname"+","+"Lastname"+","+"email"+","+"Birthday"+","+"Address"+","+"City"+","+"Postcode"+"\n";
-                        String id = rs.getString("id");
                         String firstname = rs.getString("firstname");
+                        String phone = rs.getString("phone");
                         String lastname = rs.getString("lastname");
                         String email = rs.getString("email");
-                        String day = rs.getString("day");
-                        String month = rs.getString("month");
+                        String day = String.format("%02d", Integer.parseInt(rs.getString("day")));
+                        String month = String.format("%02d", Integer.parseInt(rs.getString("month")));
                         String year = rs.getString("year");
                         String address = rs.getString("address");
                         String city = rs.getString("city");
                         String postcode = rs.getString("city");
-                        String line = id + ", " + firstname + ", " + lastname + ", " + email + ", " + day+"/"+month+"/"+year + ", " +
-                                address + ", " + city +", " + postcode + "\n";
-                        fileWriter.write(firstline+line);
+                        String vcf = "BEGIN:VCARD\n"
+                                + "VERSION:3.0\n"
+                                + "FN;CHARSET=UTF-8:" + firstname + " " + lastname + "\n"
+                                + "N:" + lastname + ";" + firstname + ";;" + "\n"
+                                + "TEL;TYPE=CELL:" + phone + "\n"
+                                + "EMAIL:" + email + "\n"
+                                + "BDAY:" + year + month + day + "\n"
+                                + "ADR;TYPE=HOME:" + address + ";" + city + ";" + postcode + "\n"
+                                + "END:VCARD\n";
+                        fileWriter.write(vcf);
                     }
                     fileWriter.close();
-                    JOptionPane.showMessageDialog(contactsPanel, "Data exported to data.csvuser1    ", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(contactsPanel, "Data exported to data.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (SQLException | IOException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(contactsPanel, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -272,6 +284,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     // After modifying the accommodations, we need to reload the form with the new data
                     // So we pass the current Frame that implements ActionListener as the ActionListenter argument
                     ContactPanel.showContactForm(c, view_type, _contactsFrame);
+                    _contactsFrame.dispose();
                 }
             });
 

@@ -1,14 +1,19 @@
 package gui;
 
+import api.Connect;
 import api.Contacts;
 import api.Contact;
 import api.Users;
+import gui.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -63,6 +68,7 @@ public class ContactPanel extends JPanel {
         JLabel lblPostcode = new JLabel("Postcode");
         JLabel lblBirthday = new JLabel("Birthday");
 
+        JButton btnDownload = new JButton("Download");
         JButton btnSave = new JButton("Save");
         JButton btnCancel = new JButton("Cancel");
         JButton btnEdit = new JButton("Edit");
@@ -197,12 +203,22 @@ public class ContactPanel extends JPanel {
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
             btnCancel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
         }
@@ -250,6 +266,59 @@ public class ContactPanel extends JPanel {
                 }
             });
 
+            btnDownload.setBounds(left, top, 120, 30);
+            add(btnDownload);
+
+            btnDownload.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Connect connection = null;
+                    try {
+                        connection = new Connect();
+                    } catch (ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table WHERE lastname = '" + contact.getLastname() + "'";
+
+                    try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                         Statement stmt = conn.createStatement();
+                         ResultSet rs = stmt.executeQuery(query)) {
+                        // Format data as CSV and save to file in Downloads folder
+                        String downloadsFolderPath = System.getProperty("user.home") + File.separator + "Downloads";
+                        String filePath = downloadsFolderPath + File.separator + contact.getLastname()+".vcf";
+                        FileWriter fileWriter = new FileWriter(filePath);
+
+                        while (rs.next()) {
+                            String firstname = rs.getString("firstname");
+                            String lastname = rs.getString("lastname");
+                            String phone = rs.getString("phone");
+                            String email = rs.getString("email");
+                            String day = String.format("%02d", Integer.parseInt(rs.getString("day")));
+                            String month = String.format("%02d", Integer.parseInt(rs.getString("month")));
+                            String year = rs.getString("year");
+                            String address = rs.getString("address");
+                            String city = rs.getString("city");
+                            String postcode = rs.getString("postcode");
+                            String vcf = "BEGIN:VCARD\n"
+                                    + "VERSION:3.0\n"
+                                    + "FN;CHARSET=UTF-8:" + "\n"
+                                    + "N:" + lastname + ";" + firstname + ";;" + "\n"
+                                    + "TEL;TYPE=CELL:" + phone + "\n"
+                                    + "EMAIL:" + email + "\n"
+                                    + "BDAY:" + year + month + day + "\n"
+                                    + "ADR;TYPE=HOME:" + address + ";" + city + ";" + postcode + "\n"
+                                    + "END:VCARD";
+                            fileWriter.write(vcf);
+                        }
+                        fileWriter.close();
+                        JOptionPane.showMessageDialog(_contact_frame, "Contact exported to contact.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException | IOException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(_contact_frame, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
             btnCancel.setBounds(left + 380, top, 120, 30);
             add(btnCancel);
 
@@ -257,6 +326,11 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
         }
@@ -287,6 +361,13 @@ public class ContactPanel extends JPanel {
 
                             _contact_frame.dispose();
                             _contact_frame = null;
+
+                            try {
+                                new ContactsFrame();
+                            } catch (SQLException | ClassNotFoundException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
                         } catch (SQLException | ClassNotFoundException ex) {
                             throw new RuntimeException(ex);
                         }
