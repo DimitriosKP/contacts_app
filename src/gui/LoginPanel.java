@@ -53,7 +53,7 @@ public class LoginPanel extends JPanel {
                 String username = txtUsername.getText();
                 String password = new String(txtPassword.getPassword());
 
-                if(Users.loginUser(username, password)) {
+                if (Users.loginUser(username, password)) {
                     //successful login
                     try {
                         new ContactsFrame();
@@ -64,8 +64,7 @@ public class LoginPanel extends JPanel {
                     JComponent comp = (JComponent) e.getSource();
                     Window win = SwingUtilities.getWindowAncestor(comp);
                     win.dispose();
-                }
-                else {
+                } else {
                     lblError.setText("Your details are not valid");
                 }
             }
@@ -102,7 +101,7 @@ public class LoginPanel extends JPanel {
     public static void showLoginForm() {
         LoginPanel lgp = new LoginPanel();
         JFrame jf = new JFrame();
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("images/icon.png")));
 
         jf.setTitle("Login");
         jf.add(lgp);

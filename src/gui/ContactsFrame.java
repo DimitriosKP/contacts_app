@@ -24,7 +24,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class ContactsFrame extends JFrame implements ActionListener {
     private static List<Contact> _contacts;
 
-    ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("icon.png")));
+    ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("images/icon.png")));
     CardLayout cl = new CardLayout();
     JPanel contactsPanel;
     JScrollPane scrollPane;
@@ -35,7 +35,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
 
     public ContactsFrame() throws SQLException, ClassNotFoundException {
         setTitle(Users.LoggedUser.getUsername()+"'s contacts");
-        setSize(new Dimension(800, 600));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setIconImage(icon.getImage());
         createActionsPanel();
@@ -50,12 +50,13 @@ public class ContactsFrame extends JFrame implements ActionListener {
         setVisible(true);
 
         _contactsFrame = this;
+        _contactsFrame.reloadContacts();
     }
 
     /**
     * Creates the action bar of the logged-in user
     * */
-    private void createActionsPanel() throws SQLException, ClassNotFoundException {
+    private void createActionsPanel() {
         JPanel actionsPanel = new JPanel();
 
         if (Users.LoggedUser.isUser()) {
@@ -69,8 +70,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
                     if (!showingSearchResults) {
                         SearchPanel.showSearchPanel(_contactsFrame);
-                    }
-                    else {
+                    } else {
                         showingSearchResults = false;
                         btnSearch.setText("Search");
                         try {
@@ -91,7 +91,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     ContactPanel.showContactForm(null, ContactPanel.VIEW_TYPE.NEW, _contactsFrame);
-                    _contactsFrame.dispose();
                 }
             });
         }
@@ -144,7 +143,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                         fileWriter.write(vcf);
                     }
                     fileWriter.close();
-                    JOptionPane.showMessageDialog(contactsPanel, "Data exported to data.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(contactsPanel, "Contacts exported to your Download folder as contacts.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (SQLException | IOException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(contactsPanel, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -201,7 +200,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 if (!c.isOwner(Users.LoggedUser.getID())) continue;
             }
 
-            if(Contacts.checkBirthday(c.getDay(), c.getMonth())) {
+            if (Contacts.checkBirthday(c.getDay(), c.getMonth())) {
                 showMessageDialog(null, "It's " + c.getFirstname() + " " + c.getLastname() + "'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
             }
 
@@ -265,7 +264,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    try { new ContactsFrame();
+                    try {
+                        new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -284,7 +284,6 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     // After modifying the accommodations, we need to reload the form with the new data
                     // So we pass the current Frame that implements ActionListener as the ActionListenter argument
                     ContactPanel.showContactForm(c, view_type, _contactsFrame);
-                    _contactsFrame.dispose();
                 }
             });
 

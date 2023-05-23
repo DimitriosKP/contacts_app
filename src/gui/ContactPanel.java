@@ -4,7 +4,6 @@ import api.Connect;
 import api.Contacts;
 import api.Contact;
 import api.Users;
-import gui.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -203,26 +202,16 @@ public class ContactPanel extends JPanel {
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    try {
-                        new ContactsFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
             });
             btnCancel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
-                    try {
-                        new ContactsFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
             });
         }
-        if(view_type == VIEW_TYPE.NEW) {
+        if (view_type == VIEW_TYPE.NEW) {
             btnSave.setBounds(left + 180, top, 120, 30);
             add(btnSave);
 
@@ -234,7 +223,7 @@ public class ContactPanel extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         if (store(view_type)) {
-                            new ContactsFrame();
+                            Contacts.load();
                         } else {
                             _contact_frame.setVisible(true);
                         }
@@ -247,16 +236,12 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
-                    try { new ContactsFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
             });
 
         }
         if (view_type == VIEW_TYPE.VIEW) {
-            btnEdit.setBounds(left + 180, top, 120, 30);
+            btnEdit.setBounds(left + 190, top, 120, 30);
             add(btnEdit);
 
             btnEdit.addActionListener(new ActionListener() {
@@ -311,7 +296,7 @@ public class ContactPanel extends JPanel {
                             fileWriter.write(vcf);
                         }
                         fileWriter.close();
-                        JOptionPane.showMessageDialog(_contact_frame, "Contact exported to contact.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(_contact_frame, "Contact exported to your Download folder as contact.vcf", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(_contact_frame, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -326,11 +311,6 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
-                    try {
-                        new ContactsFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
             });
         }
@@ -348,7 +328,7 @@ public class ContactPanel extends JPanel {
 
                     if (result == JOptionPane.YES_OPTION) {
                         try {
-                            if(Contacts.deleteContact(Contacts.getContactsID()))
+                            if (Contacts.deleteContact(Contacts.getContactsID()))
                                 showMessageDialog(null, "The contact deleted successfully", "Delete", JOptionPane.INFORMATION_MESSAGE);
                             else
                                 showMessageDialog(null, "Error due to delete contact", "Error", JOptionPane.ERROR_MESSAGE);
@@ -361,12 +341,6 @@ public class ContactPanel extends JPanel {
 
                             _contact_frame.dispose();
                             _contact_frame = null;
-
-                            try {
-                                new ContactsFrame();
-                            } catch (SQLException | ClassNotFoundException ex) {
-                                throw new RuntimeException(ex);
-                            }
 
                         } catch (SQLException | ClassNotFoundException ex) {
                             throw new RuntimeException(ex);
@@ -472,7 +446,7 @@ public class ContactPanel extends JPanel {
             return false;
         }
         if (txtPhone.getText().startsWith("69")) {
-            if(txtPhone.getText().length() != 10) {
+            if (txtPhone.getText().length() != 10) {
                 showMessageDialog(null, "Your phone number is not correct", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -499,7 +473,7 @@ public class ContactPanel extends JPanel {
         }
 
         // Αποθηκεύουμε τις αλλαγές
-        if(view_type == VIEW_TYPE.NEW) {
+        if (view_type == VIEW_TYPE.NEW) {
             if (!Contacts.store(_contact)) {
                 showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -531,7 +505,7 @@ public class ContactPanel extends JPanel {
     public static void showContactForm(Contact contact, VIEW_TYPE view_type, ActionListener onChangeListener) {
         int width = 600;
         int height = 600;
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(ContactPanel.class.getClassLoader().getResource("icon.png")));
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(ContactPanel.class.getClassLoader().getResource("images/icon.png")));
 
         if (_contact_frame != null) {
             _contact_frame.dispose();

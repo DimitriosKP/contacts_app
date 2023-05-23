@@ -158,25 +158,29 @@ public class RegisterPanel extends JPanel {
                 String password = txtPassword.getText();
                 String cpassword = txtConfPassword.getText();
 
-                if(firstname.isBlank()) {
+                if (firstname.isBlank()) {
                     lblError.setText("Please enter your first name!");
+                    return;
                 }
-                if(lastname.isBlank()) {
+                if (lastname.isBlank()) {
                     lblError.setText("Please enter your last name!");
+                    return;
                 }
-                if(username.isBlank()) {
+                if (username.isBlank()) {
                     lblError.setText("Please enter your username!");
+                    return;
                 }
-                if(password.isBlank()) {
+                if (password.isBlank()) {
                     lblError.setText("Please enter your password!");
+                    return;
                 }
-                if(cpassword.isBlank()) {
+                if (cpassword.isBlank()) {
                     lblError.setText("Please confirm your password!");
+                    return;
                 }
-
-                if(!Users.checkPassword(password, cpassword)) {
-                    JOptionPane.showMessageDialog(null, "Password does not match!");
-                    txtConfPassword.setBounds(200,290,150,30);
+                if (!Users.checkPassword(password, cpassword)) {
+                    JOptionPane.showMessageDialog(null, "Passwords do not match!");
+                    txtConfPassword.setBounds(200,310,150,30);
                     txtConfPassword.requestFocus();
                     return;
                 }
@@ -184,12 +188,12 @@ public class RegisterPanel extends JPanel {
                 boolean user_registered = false;
                 try {
                     user_registered = Users.registerUser(username, password, firstname, lastname);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     lblError.setText(ex.getMessage());
                     return;
                 }
 
-                if(user_registered) {
+                if (user_registered) {
                     showMessageDialog(null, "The registration complete successfully!");
                     _registerFrame.dispose();
                     _registerFrame = null;
@@ -214,7 +218,7 @@ public class RegisterPanel extends JPanel {
             }
         });
 
-        lblError.setBounds(0,380,360,30);
+        lblError.setBounds(15,400,360,30);
         lblError.setHorizontalAlignment(SwingConstants.CENTER);
         lblError.setForeground(Color.red);
         add(lblError);
@@ -222,9 +226,9 @@ public class RegisterPanel extends JPanel {
 
     public static void showRegisterForm() {
         RegisterPanel panel = new RegisterPanel();
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("images/icon.png")));
 
-        if(_registerFrame == null) {
+        if (_registerFrame == null) {
             _registerFrame = new JFrame();
             _registerFrame.setTitle("Register");
             _registerFrame.add(panel);

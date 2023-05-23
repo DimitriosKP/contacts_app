@@ -24,11 +24,11 @@ public class Users {
         if (_users.isEmpty()) return true;
         for (User u : _users) {
             String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
+            try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, u.getID());
-                pstmt.setString(2, u.getPassword());
-                pstmt.setString(3, u.getUsername());
+                pstmt.setString(2, u.getUsername());
+                pstmt.setString(3, u.getPassword());
                 pstmt.setString(4, u.getFirstname());
                 pstmt.setString(5, u.getLastname());
                 pstmt.executeUpdate();
@@ -48,7 +48,7 @@ public class Users {
         try {
             _users = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -94,28 +94,33 @@ public class Users {
 
     public static int getNextUserId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "your_username", "your_password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
         List<Integer> ids = new ArrayList<>();
 
         // Create a statement object
         Statement stmt = conn.createStatement();
 
-        // Execute the SQL query to delete the contact with the given ID
+        //Select all the id numbers from users table
         String query = "SELECT id FROM users";
-
         ResultSet rs = stmt.executeQuery(query);
+
         while(rs.next()){
             ids.add(rs.getInt("id"));
         }
+
         // Close the result set, statement, and connection
         rs.close();
         stmt.close();
         conn.close();
-        return Collections.max(ids) + 1;
+        if (ids.isEmpty()) {
+            return 1;
+        } else {
+            return Collections.max(ids) + 1;
+        }
     }
 
     /**
-     * Check the password.
+     * Check if the password is the same with the cpassword.
      *
      * @return True if saved
      */
@@ -134,10 +139,10 @@ public class Users {
     public static boolean loginUser(String username, String password) {
         LoggedUser = null;
 
-        if(_users == null) Users.load();
+        if (_users == null) Users.load();
         for(User u : _users) {
-            if(u.getUsername().equals(username.trim())){
-                if(u.getPassword().equals(password.trim())){
+            if (u.getUsername().equals(username.trim())){
+                if (u.getPassword().equals(password.trim())){
                     LoggedUser = u;
                     return true;
                 }

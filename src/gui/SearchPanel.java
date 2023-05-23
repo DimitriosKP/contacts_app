@@ -141,7 +141,7 @@ public class SearchPanel extends JPanel {
     public static void showSearchPanel(ActionListener onSearchListener){
         int width = 600;
         int height = 600;
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("icon.png")));
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(SearchPanel.class.getClassLoader().getResource("images/icon.png")));
 
         _onSearchListener = onSearchListener;
 
