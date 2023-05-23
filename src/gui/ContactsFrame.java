@@ -112,7 +112,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 }
                 String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table";
 
-                try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
                      Statement stmt = conn.createStatement();
                      ResultSet rs = stmt.executeQuery(query)) {
                     // Format data as VCF and save to file in Downloads folder
