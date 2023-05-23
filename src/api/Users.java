@@ -24,7 +24,7 @@ public class Users {
         if (_users.isEmpty()) return true;
         for (User u : _users) {
             String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, u.getID());
                 pstmt.setString(2, u.getUsername());
@@ -48,7 +48,7 @@ public class Users {
         try {
             _users = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -94,7 +94,7 @@ public class Users {
 
     public static int getNextUserId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
         List<Integer> ids = new ArrayList<>();
 
         // Create a statement object
