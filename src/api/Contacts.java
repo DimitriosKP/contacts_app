@@ -24,7 +24,7 @@ public class Contacts {
 
         String query = "INSERT INTO contact_table (owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode ) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, Users.LoggedUser.getID());
             pstmt.setString(2, newContact.getFirstname());
@@ -50,7 +50,7 @@ public class Contacts {
         try {
             _contacts = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -93,7 +93,7 @@ public class Contacts {
         Connect connection = new Connect();
 
         String query = "UPDATE contact_table SET firstname = ?, lastname = ?, day = ?, month = ?, year = ?, phone = ?, email = ?, address = ?, city = ?, postcode = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, newContact.getFirstname());
             pstmt.setString(2, newContact.getLastname());
@@ -118,7 +118,7 @@ public class Contacts {
     //Delete the contact from the system
     public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
 
         // Create a statement object
         Statement stmt = conn.createStatement();
@@ -135,7 +135,7 @@ public class Contacts {
 
         String query = "SELECT id FROM contact_table";
 
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next())
