@@ -55,7 +55,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
 
     /**
     * Creates the action bar of the logged-in user
-    * */
+    */
     private void createActionsPanel() {
         JPanel actionsPanel = new JPanel();
 
