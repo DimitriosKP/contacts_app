@@ -265,7 +265,7 @@ public class ContactPanel extends JPanel {
                     }
                     String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table WHERE lastname = '" + contact.getLastname() + "'";
 
-                    try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                    try (Connection conn = DriverManager.getConnection(connection.getURL(), "yourUsername", "yourPassword");
                          Statement stmt = conn.createStatement();
                          ResultSet rs = stmt.executeQuery(query)) {
                         // Format data as CSV and save to file in Downloads folder
