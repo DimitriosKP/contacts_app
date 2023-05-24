@@ -3,10 +3,10 @@ package api;
 public class User {
 
     private final int id;
-    private final String Username;
-    private final String Password;
-    private final String Firstname;
-    private final String Lastname;
+    private String Username;
+    private String Password;
+    private String Firstname;
+    private String Lastname;
 
 
     public User(int id, String Username, String Password, String Firstname, String Lastname) {
@@ -16,7 +16,9 @@ public class User {
         this.Firstname = Firstname;
         this.Lastname = Lastname;
     }
-
+    public void setFirstname(String firstname){ Firstname = firstname.trim(); }
+    public void setLastname(String lastname){ Lastname = lastname.trim(); }
+    public void setPassword(String password){ Password = password.trim(); }
     public int getID() {
         return this.id;
     }

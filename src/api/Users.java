@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -24,13 +28,14 @@ public class Users {
         if (_users.isEmpty()) return true;
         for (User u : _users) {
             String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
                  PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, u.getID());
                 pstmt.setString(2, u.getUsername());
                 pstmt.setString(3, u.getPassword());
                 pstmt.setString(4, u.getFirstname());
                 pstmt.setString(5, u.getLastname());
+
                 pstmt.executeUpdate();
             } catch (SQLException e) {
                 // handle exception
@@ -39,16 +44,16 @@ public class Users {
         return true;
     }
 
-    /**
-     * Load the new contacts from database.
-     *
-     * @return True if saved
-     */
+        /**
+         * Load the new contacts from database.
+         *
+         * @return True if saved
+         */
     public static void load() {
         try {
             _users = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -94,7 +99,7 @@ public class Users {
 
     public static int getNextUserId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
         List<Integer> ids = new ArrayList<>();
 
         // Create a statement object

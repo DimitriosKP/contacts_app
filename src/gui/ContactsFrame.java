@@ -18,6 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -35,7 +38,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
 
     public ContactsFrame() throws SQLException, ClassNotFoundException {
         setTitle(Users.LoggedUser.getUsername()+"'s contacts");
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(600,600);
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setIconImage(icon.getImage());
         createActionsPanel();
@@ -59,45 +63,54 @@ public class ContactsFrame extends JFrame implements ActionListener {
     private void createActionsPanel() {
         JPanel actionsPanel = new JPanel();
 
-        if (Users.LoggedUser.isUser()) {
-            btnSearch = new JButton("Search");
-            _contacts = Contacts.load();
-            btnSearch.setEnabled(_contacts.size() != 0);
-            actionsPanel.add(btnSearch);
+        btnSearch = new JButton("Search");
+        _contacts = Contacts.load();
+        btnSearch.setEnabled(false);
+        for(Contact contact : _contacts) {
+            if (contact.get_ownerID() == Users.LoggedUser.getID())
+                btnSearch.setEnabled(true);
+            else
+                btnSearch.setEnabled(false);
+        }
+        actionsPanel.add(btnSearch);
 
-            btnSearch.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (!showingSearchResults) {
-                        SearchPanel.showSearchPanel(_contactsFrame);
-                    } else {
-                        showingSearchResults = false;
-                        btnSearch.setText("Search");
-                        try {
-                            reloadContacts();
-                        } catch (SQLException | ClassNotFoundException ex) {
-                            throw new RuntimeException(ex);
-                        }
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!showingSearchResults) {
+                    SearchPanel.showSearchPanel(_contactsFrame);
+                } else {
+                    showingSearchResults = false;
+                    btnSearch.setText("Search");
+                    try {
+                        reloadContacts();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
                     }
                 }
-            });
-        }
+            }
+        });
 
-        if (Users.LoggedUser.isUser()) {
-            JButton btnAddNewContact = new JButton("Add new contact");
-            actionsPanel.add(btnAddNewContact);
 
-            btnAddNewContact.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    ContactPanel.showContactForm(null, ContactPanel.VIEW_TYPE.NEW, _contactsFrame);
-                }
-            });
-        }
+        JButton btnAddNewContact = new JButton("Add new contact");
+        actionsPanel.add(btnAddNewContact);
+        btnAddNewContact.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _contactsFrame.dispose();
+                ContactPanel.showContactForm(null, ContactPanel.VIEW_TYPE.NEW, _contactsFrame);
+            }
+        });
 
         JButton btnExport = new JButton("Export");
         _contacts = Contacts.load();
-        btnExport.setEnabled(_contacts.size() != 0);
+        btnExport.setEnabled(false);
+        for(Contact contact : _contacts) {
+            if (contact.get_ownerID() == Users.LoggedUser.getID())
+                btnExport.setEnabled(true);
+            else
+                btnExport.setEnabled(false);
+        }
         actionsPanel.add(btnExport);
 
         btnExport.addActionListener(new ActionListener() {
@@ -112,7 +125,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
                 }
                 String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table";
 
-                try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                try (Connection conn = DriverManager.getConnection(connection.getURL(),  Connect.getDbUsername(), Connect.getDbPassword());
                      Statement stmt = conn.createStatement();
                      ResultSet rs = stmt.executeQuery(query)) {
                     // Format data as VCF and save to file in Downloads folder
@@ -148,6 +161,15 @@ public class ContactsFrame extends JFrame implements ActionListener {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(contactsPanel, "Failed to export data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+
+        JButton btnSettings = new JButton("Settings");
+        actionsPanel.add(btnSettings);
+        btnSettings.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RegisterPanel.showRegisterForm();
             }
         });
 
@@ -196,9 +218,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
 
         for(Contact c : contacts) {
-            if (Users.LoggedUser.isUser()) {
-                if (!c.isOwner(Users.LoggedUser.getID())) continue;
-            }
+            if (!c.isOwner(Users.LoggedUser.getID()))
+                continue;
 
             if (Contacts.checkBirthday(c.getDay(), c.getMonth())) {
                 showMessageDialog(null, "It's " + c.getFirstname() + " " + c.getLastname() + "'s birthday today!", "Birthday!", JOptionPane.INFORMATION_MESSAGE);
@@ -264,6 +285,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    _contactsFrame.dispose();
                     try {
                         new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
@@ -280,6 +302,7 @@ public class ContactsFrame extends JFrame implements ActionListener {
             pane.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    _contactsFrame.dispose();
                     ContactPanel.VIEW_TYPE view_type = ContactPanel.VIEW_TYPE.VIEW;
                     // After modifying the accommodations, we need to reload the form with the new data
                     // So we pass the current Frame that implements ActionListener as the ActionListenter argument
@@ -386,7 +409,8 @@ public class ContactsFrame extends JFrame implements ActionListener {
             btnSearch.setText("All contacts");
             return;
         }
-        try { reloadContacts();
+        try {
+            reloadContacts();
         } catch (SQLException | ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }

@@ -1,12 +1,13 @@
 package api;
 
-import gui.ContactsFrame;
-
 import javax.swing.*;
 import java.sql.*;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -22,23 +23,23 @@ public class Contacts {
     public static boolean store(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
-        String query = "INSERT INTO contact_table (owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode ) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        String query = "INSERT INTO contact_table (id, owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode ) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, Users.LoggedUser.getID());
-            pstmt.setString(2, newContact.getFirstname());
-            pstmt.setString(3, newContact.getLastname());
-            pstmt.setInt(4, newContact.getDay());
-            pstmt.setInt(5, newContact.getMonth());
-            pstmt.setInt(6, newContact.getYear());
-            pstmt.setString(7, newContact.getPhone());
-            pstmt.setString(8, newContact.getEmail());
-            pstmt.setString(9, newContact.getAddress());
-            pstmt.setString(10, newContact.getCity());
-            pstmt.setString(11, newContact.getPostcode());
-            pstmt.executeUpdate();
-
+                pstmt.setInt(1, Contacts.getNextContactsId());
+                pstmt.setInt(2, Users.LoggedUser.getID());
+                pstmt.setString(3, newContact.getFirstname());
+                pstmt.setString(4, newContact.getLastname());
+                pstmt.setInt(5, newContact.getDay());
+                pstmt.setInt(6, newContact.getMonth());
+                pstmt.setInt(7, newContact.getYear());
+                pstmt.setString(8, newContact.getPhone());
+                pstmt.setString(9, newContact.getEmail());
+                pstmt.setString(10, newContact.getAddress());
+                pstmt.setString(11, newContact.getCity());
+                pstmt.setString(12, newContact.getPostcode());
+                pstmt.executeUpdate();
         } catch (SQLException e) {
             // handle exception
             return false;
@@ -50,7 +51,7 @@ public class Contacts {
         try {
             _contacts = new LinkedList<>();
             Connect connection = new Connect();
-            Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+            Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
 
             // Create a statement object
             Statement stmt = conn.createStatement();
@@ -62,6 +63,7 @@ public class Contacts {
 
             // Loop through the result set and create the Contact List _contacts
             while (rs.next()) {
+                int id = rs.getInt("id");
                 int owner_id = rs.getInt("owner_id");
                 String firstname = rs.getString("firstname");
                 String lastname = rs.getString("lastname");
@@ -74,7 +76,7 @@ public class Contacts {
                 String city = rs.getString("city");
                 String postcode = rs.getString("postcode");
 
-                Contact c = new Contact(owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode);
+                Contact c = new Contact(id, owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode);
                 _contacts.add(c);
             }
             // Close the result set, statement, and connection
@@ -93,21 +95,21 @@ public class Contacts {
         Connect connection = new Connect();
 
         String query = "UPDATE contact_table SET firstname = ?, lastname = ?, day = ?, month = ?, year = ?, phone = ?, email = ?, address = ?, city = ?, postcode = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(),  Connect.getDbUsername(), Connect.getDbPassword());
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, newContact.getFirstname());
-            pstmt.setString(2, newContact.getLastname());
-            pstmt.setInt(3, newContact.getDay());
-            pstmt.setInt(4, newContact.getMonth());
-            pstmt.setInt(5, newContact.getYear());
-            pstmt.setString(6, newContact.getPhone());
-            pstmt.setString(7, newContact.getEmail());
-            pstmt.setString(8, newContact.getAddress());
-            pstmt.setString(9, newContact.getCity());
-            pstmt.setString(10, newContact.getPostcode());
-            pstmt.setInt(11, getContactsID());
+                pstmt.setString(1, newContact.getFirstname());
+                pstmt.setString(2, newContact.getLastname());
+                pstmt.setInt(3, newContact.getDay());
+                pstmt.setInt(4, newContact.getMonth());
+                pstmt.setInt(5, newContact.getYear());
+                pstmt.setString(6, newContact.getPhone());
+                pstmt.setString(7, newContact.getEmail());
+                pstmt.setString(8, newContact.getAddress());
+                pstmt.setString(9, newContact.getCity());
+                pstmt.setString(10, newContact.getPostcode());
+                pstmt.setInt(11, getContactID());
 
-            pstmt.executeUpdate();
+                pstmt.executeUpdate();
         } catch (SQLException e) {
             // handle exception
             return false;
@@ -118,7 +120,7 @@ public class Contacts {
     //Delete the contact from the system
     public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
-        Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
 
         // Create a statement object
         Statement stmt = conn.createStatement();
@@ -130,23 +132,49 @@ public class Contacts {
         return numRowsAffected == 1;
     }
 
-    public static int getContactsID() throws ClassNotFoundException, SQLException {
+    public static int getNextContactsId() throws SQLException, ClassNotFoundException {
+        Connect connection = new Connect();
+        Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
+        List<Integer> ids = new ArrayList<>();
+
+        // Create a statement object
+        Statement stmt = conn.createStatement();
+
+        //Select all the id numbers from contacts table
+        String query = "SELECT id FROM contact_table";
+        ResultSet rs = stmt.executeQuery(query);
+
+        while(rs.next()){
+            ids.add(rs.getInt("id"));
+        }
+
+        // Close the result set, statement, and connection
+        rs.close();
+        stmt.close();
+        conn.close();
+        if (ids.isEmpty()) {
+            return 1;
+        } else {
+            return Collections.max(ids) + 1;
+        }
+    }
+
+    public static int getContactID() throws ClassNotFoundException, SQLException {
         Connect connection = new Connect();
 
         String query = "SELECT id FROM contact_table";
-
-        try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next())
-                return rs.getInt("id");
-            // Close the result set
-            rs.close();
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next())
+                    return rs.getInt("id");
+                // Close the result set
+                rs.close();
         } catch (SQLException e) {
             // handle exception
             return 0;
         }
-        return 1;
+        return Contacts.getContactID();
     }
 
     /**

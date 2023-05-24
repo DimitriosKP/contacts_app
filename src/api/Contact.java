@@ -33,7 +33,8 @@ public class Contact {
      * @param city      contact's city
      * @param postcode  contact's postcode
      */
-    public Contact(int owner_id, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
+    public Contact(int id, int owner_id, String firstname, String lastname, String day, String month, String year, String phone, String email, String address, String city, String postcode) {
+        setId(id);
         setOwner(owner_id);
         setFirstname(firstname);
         setLastname(lastname);
@@ -49,7 +50,9 @@ public class Contact {
     public void setId(int id){
         _id = id;
     }
-
+    public int get_id() {
+        return _id;
+    }
     /**
      * Sets the Owner's user_id
      *
@@ -62,6 +65,9 @@ public class Contact {
         return _ownerID == user_id;
     }
 
+    public int get_ownerID(){
+        return _ownerID;
+    }
     /**
      * Sets the contact's firstname
      *

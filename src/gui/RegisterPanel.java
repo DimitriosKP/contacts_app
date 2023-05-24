@@ -1,5 +1,6 @@
 package gui;
 
+import api.Connect;
 import api.Users;
 
 import javax.swing.*;
@@ -10,13 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class RegisterPanel extends JPanel {
-
     JLabel lblTitle = new JLabel("Create new account");
     JLabel lblFirstname = new JLabel("First name");
     JLabel lblLastname = new JLabel("Last name");
@@ -31,11 +35,20 @@ public class RegisterPanel extends JPanel {
     JTextField txtConfPassword = new JTextField("");
 
     JButton btnRegister = new JButton("Register");
+    JButton btnUpdate = new JButton("Update");
+    JButton btnCancel = new JButton("Cancel");
     JLabel lblSignIn = new JLabel("<html><u>Do you already have an account? Sign In!</u></html>");
     JLabel lblPasMessage = new JLabel("Hello");
     JLabel lblError =new JLabel("");
 
     static JFrame _registerFrame = null;
+    ActionListener _onChangeListener = null;
+
+    public enum VIEW_TYPE {
+        VIEW,
+        NEW,
+        EDIT
+    }
 
     public RegisterPanel() {
         setLayout(null);
@@ -145,9 +158,38 @@ public class RegisterPanel extends JPanel {
         txtConfPassword.setBounds(200,310,150,30);
         add(txtConfPassword);
 
-        btnRegister.setBounds(150,370,100,30);
-        add(btnRegister);
+        if (Users.LoggedUser == null) {
+            btnRegister.setBounds(150,370,100,30);
+            add(btnRegister);
+        } else {
+            lblTitle.setText("Edit Contact");
 
+            btnUpdate.setBounds(85, 370, 100, 30);
+            add(btnUpdate);
+
+            btnCancel.setBounds(200, 370, 100, 30);
+            add(btnCancel);
+
+            fillValues(Users.LoggedUser.isUser());
+
+            btnUpdate.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        update();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+            btnCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _registerFrame.dispose();
+                }
+            });
+        }
         btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -203,25 +245,100 @@ public class RegisterPanel extends JPanel {
             }
         });
 
-        lblSignIn.setBounds(20,430,360,30);
-        lblSignIn.setForeground(Color.BLUE);
-        lblSignIn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        if (Users.LoggedUser == null) {
+            lblSignIn.setBounds(20,430,360,30);
+            lblSignIn.setForeground(Color.BLUE);
+            lblSignIn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        lblSignIn.setHorizontalAlignment(SwingConstants.CENTER);
-        add(lblSignIn);
-        lblSignIn.addMouseListener(new MouseAdapter()
-        {
-            public void mouseClicked(MouseEvent e)
+            lblSignIn.setHorizontalAlignment(SwingConstants.CENTER);
+            add(lblSignIn);
+            lblSignIn.addMouseListener(new MouseAdapter()
             {
-                _registerFrame.dispose();
-                _registerFrame = null;
-            }
-        });
+                public void mouseClicked(MouseEvent e)
+                {
+                    _registerFrame.dispose();
+                    _registerFrame = null;
+                }
+            });
+        }
 
         lblError.setBounds(15,400,360,30);
         lblError.setHorizontalAlignment(SwingConstants.CENTER);
         lblError.setForeground(Color.red);
         add(lblError);
+    }
+
+    private void fillValues(boolean can_edit) {
+        txtFirstname.setText(Users.LoggedUser.getFirstname());
+        txtFirstname.setEditable(can_edit);
+
+        txtLastname.setText(Users.LoggedUser.getLastname());
+        txtLastname.setEditable(can_edit);
+
+        txtUsername.setText(Users.LoggedUser.getUsername());
+        txtUsername.setEditable(can_edit);
+
+        txtPassword.setText(Users.LoggedUser.getPassword());
+        txtPassword.setEditable(can_edit);
+    }
+
+    private boolean update() throws SQLException, ClassNotFoundException {
+        if (txtFirstname.getText().isBlank()) {
+            showMessageDialog(null, "Please enter your first name", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (txtLastname.getText().isBlank()) {
+            showMessageDialog(null, "Please enter your last name", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (txtUsername.getText().isBlank()) {
+            showMessageDialog(null, "Please enter your username", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (txtPassword.getText().isBlank()) {
+            showMessageDialog(null, "Please enter a password", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (txtConfPassword.getText().isBlank()) {
+            showMessageDialog(null, "Please confirm password", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        Users.LoggedUser.setFirstname(txtFirstname.getText());
+        Users.LoggedUser.setLastname(txtLastname.getText());
+        if (Users.checkPassword(txtPassword.getText(), txtConfPassword.getText())) {
+            Users.LoggedUser.setPassword(txtPassword.getText());
+        } else {
+            showMessageDialog(null, "Passwords do not match", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (_onChangeListener != null) {
+            _onChangeListener.actionPerformed(new ActionEvent(_registerFrame, 1, ""));
+        }
+        showMessageDialog(null, "The contact saved successfully", "Save", JOptionPane.INFORMATION_MESSAGE);
+        _registerFrame.dispose();
+        _registerFrame=null;
+
+        Connect connection = new Connect();
+
+        String query = "UPDATE users SET username = ?, firstname = ?, lastname = ?, password = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, txtUsername.getText());
+            pstmt.setString(2, txtFirstname.getText());
+            pstmt.setString(3, txtLastname.getText());
+            pstmt.setString(4, txtPassword.getText());
+            pstmt.setInt(5, Users.LoggedUser.getID());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            // handle exception
+            return false;
+        }
+
+        return true;
     }
 
     public static void showRegisterForm() {

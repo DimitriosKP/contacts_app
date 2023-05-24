@@ -16,6 +16,10 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class ContactPanel extends JPanel {
@@ -199,6 +203,7 @@ public class ContactPanel extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         store(view_type);
+                        new ContactsFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -208,6 +213,11 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
         }
@@ -224,6 +234,7 @@ public class ContactPanel extends JPanel {
                     try {
                         if (store(view_type)) {
                             Contacts.load();
+                            new ContactsFrame();
                         } else {
                             _contact_frame.setVisible(true);
                         }
@@ -236,6 +247,11 @@ public class ContactPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _contact_frame.dispose();
+                    try {
+                        new ContactsFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
 
@@ -265,7 +281,7 @@ public class ContactPanel extends JPanel {
                     }
                     String query = "SELECT firstname, lastname, phone, email, day, month, year, address, city, postcode FROM contact_table WHERE lastname = '" + contact.getLastname() + "'";
 
-                    try (Connection conn = DriverManager.getConnection(connection.getURL(), "root", "password");
+                    try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
                          Statement stmt = conn.createStatement();
                          ResultSet rs = stmt.executeQuery(query)) {
                         // Format data as CSV and save to file in Downloads folder
@@ -328,8 +344,10 @@ public class ContactPanel extends JPanel {
 
                     if (result == JOptionPane.YES_OPTION) {
                         try {
-                            if (Contacts.deleteContact(Contacts.getContactsID()))
+                            if (Contacts.deleteContact(_contact.get_id())) {
                                 showMessageDialog(null, "The contact deleted successfully", "Delete", JOptionPane.INFORMATION_MESSAGE);
+                                new ContactsFrame();
+                            }
                             else
                                 showMessageDialog(null, "Error due to delete contact", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -430,12 +448,12 @@ public class ContactPanel extends JPanel {
             showMessageDialog(null, "Please enter the contacts address", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        */
 
         if (!txtEmail.getText().isBlank() && !txtEmail.getText().contains("@")) {
             showMessageDialog(null, "Please enter an email address", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        */
 
         if (txtPhone.getText().isBlank()) {
             showMessageDialog(null, "Please enter a phone number", "Error", JOptionPane.ERROR_MESSAGE);
@@ -453,7 +471,7 @@ public class ContactPanel extends JPanel {
         }
 
         if (_contact == null) {
-            _contact = new Contact(Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
+            _contact = new Contact(Contacts.getNextContactsId(), Users.LoggedUser.getID(), txtFname.getText(), txtLname.getText(), day.getSelectedItem().toString(), month.getSelectedItem().toString(), year.getSelectedItem().toString(), txtPhone.getText(), txtEmail.getText(), txtAddress.getText(), txtCity.getText(), txtPostcode.getText());
             if (!Contacts.addContact(_contact)) {
                 showMessageDialog(null, "Failed to store contact", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -472,7 +490,7 @@ public class ContactPanel extends JPanel {
             _contact.setPostcode(txtPostcode.getText());
         }
 
-        // Αποθηκεύουμε τις αλλαγές
+        // Save the changes
         if (view_type == VIEW_TYPE.NEW) {
             if (!Contacts.store(_contact)) {
                 showMessageDialog(null, "Save failed", "Error", JOptionPane.ERROR_MESSAGE);
@@ -510,20 +528,19 @@ public class ContactPanel extends JPanel {
         if (_contact_frame != null) {
             _contact_frame.dispose();
         }
+
         ContactPanel panel = new ContactPanel(contact, view_type, onChangeListener);
         _contact_frame = new JFrame();
-
-        _contact_frame.setTitle("Contact");
 
         JScrollPane scroll = new JScrollPane(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         scroll.setPreferredSize(new Dimension(width - 50, 100));
 
+        _contact_frame.setTitle("Contact");
         _contact_frame.add(new JScrollPane(scroll));
         _contact_frame.setSize(new Dimension(width, height));
         _contact_frame.setResizable(false);
-
         _contact_frame.setLocationRelativeTo(null);
         _contact_frame.setVisible(true);
         _contact_frame.setIconImage(icon.getImage());

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
 public class SearchPanel extends JPanel {
     static ActionListener  _onSearchListener = null;
     private static JFrame _search_frame;
