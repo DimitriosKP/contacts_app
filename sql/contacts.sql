@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `contact_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `contact_table` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL,
   `owner_id` int DEFAULT NULL,
   `firstname` varchar(45) DEFAULT NULL,
   `lastname` varchar(45) DEFAULT NULL,
