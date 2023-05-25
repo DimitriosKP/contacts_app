@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Objects;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -405,6 +404,14 @@ public class ContactPanel extends JPanel {
         txtPostcode.setText(_contact.getPostcode());
         txtPostcode.setEditable(can_edit);
     }
+
+    /**
+     * The user selects the day of birth
+     *
+     * @param value
+     *
+     * @return the user's selection as day of birth or -1 if the user has not select
+     */
     private int selectedDay(int value) {
         for (int i=0; i < day.getItemCount(); i++) {
             if (day.getItemAt(i).equals(value)) {
@@ -414,6 +421,14 @@ public class ContactPanel extends JPanel {
         }
         return -1;
     }
+
+    /**
+     * The user selects the month of birth
+     *
+     * @param value
+     *
+     * @return the user's selection as month of birth or -1 if the user has not select
+     */
     private int selectedMonth(int value) {
         for (int i=0; i < month.getItemCount(); i++) {
             if (month.getItemAt(i).equals(value)) {
@@ -423,6 +438,14 @@ public class ContactPanel extends JPanel {
         }
         return -1;
     }
+
+    /**
+     * The user selects the year of birth
+     *
+     * @param value
+     *
+     * @return the user's selection as year of birth or -1 if the user has not select
+     */
     private int selectedYear(int value) {
         for (int i=0; i < year.getItemCount(); i++) {
             if (year.getItemAt(i).equals(value)) {
@@ -433,6 +456,13 @@ public class ContactPanel extends JPanel {
         return -1;
     }
 
+    /**
+     * This method accepts as parameter the view_type
+     *
+     * @param view_type
+     *
+     * @return the user's selection as month of birth or -1 if the user has not select
+     */
     private boolean store(VIEW_TYPE view_type) throws SQLException, ClassNotFoundException {
         if (txtFname.getText().isBlank()) {
             showMessageDialog(null, "Please enter contacts first name", "Error", JOptionPane.ERROR_MESSAGE);

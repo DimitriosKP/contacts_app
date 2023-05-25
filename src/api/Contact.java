@@ -21,6 +21,7 @@ public class Contact {
     private String _birthday = "";
     /**
      * Creates a new contact
+     * @param id        contact's id
      * @param owner_id  contact's owner ID
      * @param firstname contact's first name
      * @param lastname  contact's last name
@@ -47,12 +48,16 @@ public class Contact {
         setCity(city);
         setPostcode(postcode);
     }
+
+    /**
+     * Sets the contact's id
+     *
+     * @param id The contact's id
+     */
     public void setId(int id){
         _id = id;
     }
-    public int get_id() {
-        return _id;
-    }
+
     /**
      * Sets the Owner's user_id
      *
@@ -65,9 +70,6 @@ public class Contact {
         return _ownerID == user_id;
     }
 
-    public int get_ownerID(){
-        return _ownerID;
-    }
     /**
      * Sets the contact's firstname
      *
@@ -101,7 +103,7 @@ public class Contact {
     }
 
     /**
-     * returns the contact's address
+     * Returns the contact's address
      *
      * @return the contact's address
      */
@@ -110,7 +112,25 @@ public class Contact {
     }
 
     /**
-     * returns the contact's email address
+     * Returns the contact's id
+     *
+     * @return the contact's id
+     */
+    public int get_id() {
+        return _id;
+    }
+
+    /**
+     * Returns the contact's owner id
+     *
+     * @return the contact's owner id
+     */
+    public int get_ownerID(){
+        return _ownerID;
+    }
+
+    /**
+     * Returns the contact's email address
      *
      * @return the contact's email address
      */
@@ -119,7 +139,7 @@ public class Contact {
     }
 
     /**
-     * returns the contact's first name
+     * Returns the contact's first name
      *
      * @return the first name
      */
@@ -128,7 +148,7 @@ public class Contact {
     }
 
     /**
-     * returns the contact's last name
+     * Returns the contact's last name
      *
      * @return the last name
      */
@@ -145,7 +165,7 @@ public class Contact {
     }
 
     /**
-     * returns the contact's address
+     * Returns the contact's address
      *
      * @return the users address
      */
@@ -164,7 +184,7 @@ public class Contact {
     }
 
     /**
-     * returns the contact's city
+     * Returns the contact's city
      *
      * @return the contact's city
      */
@@ -257,6 +277,7 @@ public class Contact {
     }
 
     /**
+     * Returns the the date that the contact was saved
      *
      * @return the date that the contact was saved
      */

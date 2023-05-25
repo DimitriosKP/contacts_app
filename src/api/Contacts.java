@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Contacts {
@@ -47,6 +46,11 @@ public class Contacts {
         return true;
     }
 
+    /**
+     * Load the contacts from database.
+     *
+     * @return the List with contacts
+     */
     public static List<Contact> load(){
         try {
             _contacts = new LinkedList<>();
@@ -91,6 +95,11 @@ public class Contacts {
         return _contacts;
     }
 
+    /**
+     * Update the contact to database.
+     *
+     * @return True if the contact has updated
+     */
     public static boolean update(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
@@ -117,6 +126,11 @@ public class Contacts {
         return true;
     }
 
+    /**
+     * Delete contact from database.
+     *
+     * @return True if the contact has deleted
+     */
     //Delete the contact from the system
     public static boolean deleteContact(int id) throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
@@ -129,9 +143,14 @@ public class Contacts {
         String query = "DELETE FROM contact_table WHERE id = " + id;
         int numRowsAffected = stmt.executeUpdate(query);
         // Check if delete was successful
-        return numRowsAffected == 1;
+        return numRowsAffected == 1;  //true
     }
 
+    /**
+     * Founds Founds the next id number for the contact
+     *
+     * @return The next id number for the contact
+     */
     public static int getNextContactsId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
         Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
@@ -159,6 +178,11 @@ public class Contacts {
         }
     }
 
+    /**
+     * Returns the contact's id
+     *
+     * @return The contact's id number
+     */
     public static int getContactID() throws ClassNotFoundException, SQLException {
         Connect connection = new Connect();
 

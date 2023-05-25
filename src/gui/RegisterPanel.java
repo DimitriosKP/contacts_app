@@ -170,7 +170,7 @@ public class RegisterPanel extends JPanel {
             btnCancel.setBounds(200, 370, 100, 30);
             add(btnCancel);
 
-            fillValues(Users.LoggedUser.isUser());
+            fillValues(Users.LoggedUser != null);
 
             btnUpdate.addActionListener(new ActionListener() {
                 @Override
@@ -282,6 +282,13 @@ public class RegisterPanel extends JPanel {
         txtPassword.setEditable(can_edit);
     }
 
+    /**
+     * Update the users details
+     *
+     * @return true if the update successful, false in other case
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     private boolean update() throws SQLException, ClassNotFoundException {
         if (txtFirstname.getText().isBlank()) {
             showMessageDialog(null, "Please enter your first name", "Error", JOptionPane.ERROR_MESSAGE);

@@ -97,6 +97,11 @@ public class Users {
         return false;
     }
 
+    /**
+     * Founds the new user next id
+     *
+     * @return the next id integer
+     */
     public static int getNextUserId() throws SQLException, ClassNotFoundException {
         Connect connection = new Connect();
         Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
