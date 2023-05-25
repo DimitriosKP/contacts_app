@@ -1,20 +1,3 @@
--- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
---
--- Host: 127.0.0.1    Database: contacts
--- ------------------------------------------------------
--- Server version	8.0.32
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
 --
 -- Table structure for table `contact_table`
 --
@@ -45,7 +28,7 @@ CREATE TABLE `contact_table` (
 
 LOCK TABLES `contact_table` WRITE;
 /*!40000 ALTER TABLE `contact_table` DISABLE KEYS */;
-INSERT INTO `contact_table` VALUES (1,1,'John','Doe',21,3,1988,6943231234,'johndoe@testmail.com','84 Green Lane','London','NW61 3WK');
+INSERT INTO `contact_table` VALUES (1,1,'John','Doe',21,3,1988,1252367814,'johndoe@testmail.com','84 Green Lane','London','NW61 3WK');
 /*!40000 ALTER TABLE `contact_table` ENABLE KEYS */;
 UNLOCK TABLES;
 
