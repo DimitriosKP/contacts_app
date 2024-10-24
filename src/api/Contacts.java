@@ -1,5 +1,7 @@
 package api;
 
+import repositories.ContactRepository;
+
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
@@ -11,8 +13,9 @@ import java.sql.SQLException;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Contacts {
-    private static List<Contact> _contacts;
-    private static List<User> _users;
+    private static List<Contact> contacts;
+    private static List<User> users;
+    private static ContactRepository contactRepository = new ContactRepository();
 
     /**
      * Saves the new contacts to database.
@@ -22,23 +25,21 @@ public class Contacts {
     public static boolean store(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
-        String query = "INSERT INTO contact_table (id, owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode ) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, Contacts.getNextContactsId());
-                pstmt.setInt(2, Users.LoggedUser.getID());
-                pstmt.setString(3, newContact.getFirstname());
-                pstmt.setString(4, newContact.getLastname());
-                pstmt.setInt(5, newContact.getDay());
-                pstmt.setInt(6, newContact.getMonth());
-                pstmt.setInt(7, newContact.getYear());
-                pstmt.setString(8, newContact.getPhone());
-                pstmt.setString(9, newContact.getEmail());
-                pstmt.setString(10, newContact.getAddress());
-                pstmt.setString(11, newContact.getCity());
-                pstmt.setString(12, newContact.getPostcode());
-                pstmt.executeUpdate();
+             PreparedStatement pstmt = conn.prepareStatement(contactRepository.getInsertQuery())) {
+            pstmt.setInt(1, Contacts.getNextContactsId());
+            pstmt.setInt(2, Users.LoggedUser.getID());
+            pstmt.setString(3, newContact.getFirstname());
+            pstmt.setString(4, newContact.getLastname());
+            pstmt.setInt(5, newContact.getDay());
+            pstmt.setInt(6, newContact.getMonth());
+            pstmt.setInt(7, newContact.getYear());
+            pstmt.setString(8, newContact.getPhone());
+            pstmt.setString(9, newContact.getEmail());
+            pstmt.setString(10, newContact.getAddress());
+            pstmt.setString(11, newContact.getCity());
+            pstmt.setString(12, newContact.getPostcode());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             // handle exception
             return false;
@@ -51,9 +52,9 @@ public class Contacts {
      *
      * @return the List with contacts
      */
-    public static List<Contact> load(){
+    public static List<Contact> load() {
         try {
-            _contacts = new LinkedList<>();
+            contacts = new LinkedList<>();
             Connect connection = new Connect();
             Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
 
@@ -61,9 +62,7 @@ public class Contacts {
             Statement stmt = conn.createStatement();
 
             // Execute the SQL query and get the result set
-            ResultSet rs = stmt.executeQuery("SELECT c.id, c.owner_id, u.id, u.username, c.firstname, c.lastname, c.day, c.month, c.year, c.phone, c.email, c.address, c.city, c.postcode " +
-                    "FROM contact_table c " +
-                    "JOIN users u ON c.owner_id = u.id");
+            ResultSet rs = stmt.executeQuery(contactRepository.getLoadQuery());
 
             // Loop through the result set and create the Contact List _contacts
             while (rs.next()) {
@@ -81,7 +80,7 @@ public class Contacts {
                 String postcode = rs.getString("postcode");
 
                 Contact c = new Contact(id, owner_id, firstname, lastname, day, month, year, phone, email, address, city, postcode);
-                _contacts.add(c);
+                contacts.add(c);
             }
             // Close the result set, statement, and connection
             rs.close();
@@ -89,10 +88,10 @@ public class Contacts {
             conn.close();
 
         } catch (Exception e) {
-            _contacts = null;
+            contacts = null;
             showMessageDialog(null, "Error due to contacts loading", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return _contacts;
+        return contacts;
     }
 
     /**
@@ -103,22 +102,21 @@ public class Contacts {
     public static boolean update(Contact newContact) throws ClassNotFoundException {
         Connect connection = new Connect();
 
-        String query = "UPDATE contact_table SET firstname = ?, lastname = ?, day = ?, month = ?, year = ?, phone = ?, email = ?, address = ?, city = ?, postcode = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(connection.getURL(),  Connect.getDbUsername(), Connect.getDbPassword());
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, newContact.getFirstname());
-                pstmt.setString(2, newContact.getLastname());
-                pstmt.setInt(3, newContact.getDay());
-                pstmt.setInt(4, newContact.getMonth());
-                pstmt.setInt(5, newContact.getYear());
-                pstmt.setString(6, newContact.getPhone());
-                pstmt.setString(7, newContact.getEmail());
-                pstmt.setString(8, newContact.getAddress());
-                pstmt.setString(9, newContact.getCity());
-                pstmt.setString(10, newContact.getPostcode());
-                pstmt.setInt(11, getContactID());
+        try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
+             PreparedStatement pstmt = conn.prepareStatement(contactRepository.getUpdateQuery())) {
+            pstmt.setString(1, newContact.getFirstname());
+            pstmt.setString(2, newContact.getLastname());
+            pstmt.setInt(3, newContact.getDay());
+            pstmt.setInt(4, newContact.getMonth());
+            pstmt.setInt(5, newContact.getYear());
+            pstmt.setString(6, newContact.getPhone());
+            pstmt.setString(7, newContact.getEmail());
+            pstmt.setString(8, newContact.getAddress());
+            pstmt.setString(9, newContact.getCity());
+            pstmt.setString(10, newContact.getPostcode());
+            pstmt.setInt(11, getContactID());
 
-                pstmt.executeUpdate();
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             // handle exception
             return false;
@@ -140,8 +138,7 @@ public class Contacts {
         Statement stmt = conn.createStatement();
 
         // Execute the SQL query to delete the contact with the given ID
-        String query = "DELETE FROM contact_table WHERE id = " + id;
-        int numRowsAffected = stmt.executeUpdate(query);
+        int numRowsAffected = stmt.executeUpdate(contactRepository.getDeleteQuery() + id);
         // Check if delete was successful
         return numRowsAffected == 1;  //true
     }
@@ -160,10 +157,9 @@ public class Contacts {
         Statement stmt = conn.createStatement();
 
         //Select all the id numbers from contacts table
-        String query = "SELECT id FROM contact_table";
-        ResultSet rs = stmt.executeQuery(query);
+        ResultSet rs = stmt.executeQuery(contactRepository.getNextId());
 
-        while(rs.next()){
+        while (rs.next()) {
             ids.add(rs.getInt("id"));
         }
 
@@ -186,14 +182,13 @@ public class Contacts {
     public static int getContactID() throws ClassNotFoundException, SQLException {
         Connect connection = new Connect();
 
-        String query = "SELECT id FROM contact_table";
         try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next())
-                    return rs.getInt("id");
-                // Close the result set
-                rs.close();
+             PreparedStatement pstmt = conn.prepareStatement(contactRepository.getCntctId())) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next())
+                return rs.getInt("id");
+            // Close the result set
+            rs.close();
         } catch (SQLException e) {
             // handle exception
             return 0;
@@ -207,8 +202,8 @@ public class Contacts {
      * @param contact the object of new contact
      */
     public static boolean addContact(Contact contact) {
-        if (_contacts == null) load();
-        _contacts.add(contact);
+        if (contacts == null) load();
+        contacts.add(contact);
         return true;
     }
 
@@ -228,10 +223,11 @@ public class Contacts {
 
     /**
      * Returns a list of Contact objects with all registered contacts
+     *
      * @return List of objects of type Contact
      */
     public static List<Contact> getContacts() throws SQLException, ClassNotFoundException {
-        if (_contacts == null) load();
-        return _contacts;
+        if (contacts == null) load();
+        return contacts;
     }
 }

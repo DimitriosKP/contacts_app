@@ -1,5 +1,7 @@
 package api;
 
+import repositories.UserRepository;
+
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class Users {
     private static List<User> _users;
     public static User LoggedUser = null;
+    private static UserRepository userRepository = new UserRepository();
 
     /**
      * Saves the new contacts to database.
@@ -27,9 +30,9 @@ public class Users {
 
         if (_users.isEmpty()) return true;
         for (User u : _users) {
-            String query = "INSERT INTO users (id, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
-                 PreparedStatement pstmt = conn.prepareStatement(query)) {
+                 PreparedStatement pstmt = conn.prepareStatement(userRepository.getInsertQuery())) {
+
                 pstmt.setInt(1, u.getID());
                 pstmt.setString(2, u.getUsername());
                 pstmt.setString(3, u.getPassword());
@@ -44,22 +47,23 @@ public class Users {
         return true;
     }
 
-        /**
-         * Load the new contacts from database.
-         *
-         * @return True if saved
-         */
+    /**
+     * Load the new contacts from database.
+     *
+     * @return True if saved
+     */
     public static void load() {
         try {
             _users = new LinkedList<>();
             Connect connection = new Connect();
             Connection conn = DriverManager.getConnection(connection.getURL(), Connect.getDbUsername(), Connect.getDbPassword());
+            String query = userRepository.getLoadQuery();
 
             // Create a statement object
             Statement stmt = conn.createStatement();
 
             // Execute the SQL query and get the result set
-            ResultSet rs = stmt.executeQuery("SELECT id, username, password, firstname, lastname FROM users");
+            ResultSet rs = stmt.executeQuery(query);
 
             // Loop through the result set and create the Contact List _contacts
             while (rs.next()) {
@@ -111,10 +115,9 @@ public class Users {
         Statement stmt = conn.createStatement();
 
         //Select all the id numbers from users table
-        String query = "SELECT id FROM users";
-        ResultSet rs = stmt.executeQuery(query);
+        ResultSet rs = stmt.executeQuery(userRepository.getNextId());
 
-        while(rs.next()){
+        while (rs.next()) {
             ids.add(rs.getInt("id"));
         }
 
@@ -143,16 +146,15 @@ public class Users {
      *
      * @param username
      * @param password
-     *
      * @return True if the parameters are in the database. True if the parameters are in the database. So the user is logged in.
      */
     public static boolean loginUser(String username, String password) {
         LoggedUser = null;
 
         if (_users == null) Users.load();
-        for(User u : _users) {
-            if (u.getUsername().equals(username.trim())){
-                if (u.getPassword().equals(password.trim())){
+        for (User u : _users) {
+            if (u.getUsername().equals(username.trim())) {
+                if (u.getPassword().equals(password.trim())) {
                     LoggedUser = u;
                     return true;
                 }
@@ -167,10 +169,7 @@ public class Users {
      * @param username
      * @param password
      * @param firstname
-     * @param lastname
-     *
-     * Checks if the username is already exist by using the function usernameExists.
-     *
+     * @param lastname  Checks if the username is already exist by using the function usernameExists.
      * @return the store of the new user
      */
     public static boolean registerUser(String username, String password, String firstname, String lastname) throws Exception {
@@ -189,7 +188,6 @@ public class Users {
      * Checks the strength of the password.
      *
      * @param pass
-     *
      * @return 0 if the field is blank.
      * @return 1 if the password contains lowercase-uppercase letters, numbers, symbols.
      * @return 2 if the password contains lowercase-uppercase letters, symbols.

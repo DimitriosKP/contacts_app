@@ -3,10 +3,10 @@ package api;
 public class User {
 
     private final int id;
-    private String Username;
-    private String Password;
-    private String Firstname;
-    private String Lastname;
+    private String username;
+    private String password;
+    private String firstName;
+    private String lastName;
 
     /**
      *  The User's Constructor
@@ -19,10 +19,10 @@ public class User {
      */
     public User(int id, String Username, String Password, String Firstname, String Lastname) {
         this.id = id;
-        this.Username = Username;
-        this.Password = Password;
-        this.Firstname = Firstname;
-        this.Lastname = Lastname;
+        this.username = Username;
+        this.password = Password;
+        this.firstName = Firstname;
+        this.lastName = Lastname;
     }
 
     /**
@@ -30,21 +30,21 @@ public class User {
      *
      * @param firstname The user's first name
      */
-    public void setFirstname(String firstname){ Firstname = firstname.trim(); }
+    public void setFirstname(String firstname){ firstName = firstname.trim(); }
 
     /**
      * Sets the user's firstname
      *
      * @param lastname The user's last name
      */
-    public void setLastname(String lastname){ Lastname = lastname.trim(); }
+    public void setLastname(String lastname){ lastName = lastname.trim(); }
 
     /**
      * Sets the user's password
      *
      * @param password The user's password
      */
-    public void setPassword(String password){ Password = password.trim(); }
+    public void setPassword(String password){ password = password.trim(); }
 
     /**
      * Returns the user's id
@@ -61,7 +61,7 @@ public class User {
      * @return the user's username
      */
     public String getUsername() {
-        return this.Username;
+        return this.username;
     }
 
     /**
@@ -70,7 +70,7 @@ public class User {
      * @return the user's firstname
      */
     public String getFirstname() {
-        return Firstname;
+        return firstName;
     }
 
     /**
@@ -79,7 +79,7 @@ public class User {
      * @return the user's lastname
      */
     public String getLastname() {
-        return Lastname;
+        return lastName;
     }
 
     /**
@@ -88,6 +88,6 @@ public class User {
      * @return the user's password
      */
     public String getPassword() {
-        return Password;
+        return password;
     }
 }
