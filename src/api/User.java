@@ -12,17 +12,17 @@ public class User {
      *  The User's Constructor
      *
      * @param id
-     * @param Username
-     * @param Password
-     * @param Firstname
-     * @param Lastname
+     * @param username
+     * @param password
+     * @param firstName
+     * @param lastName
      */
-    public User(int id, String Username, String Password, String Firstname, String Lastname) {
+    public User(int id, String username, String password, String firstName, String lastName) {
         this.id = id;
-        this.username = Username;
-        this.password = Password;
-        this.firstName = Firstname;
-        this.lastName = Lastname;
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     /**
